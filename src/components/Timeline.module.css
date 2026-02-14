@@ -1,0 +1,132 @@
+.timeline {
+    padding: 4rem 1rem;
+    background: rgba(255, 255, 255, 0.5);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title {
+    font-size: 2.5rem;
+    color: var(--hot-pink);
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.line {
+    position: absolute;
+    left: 20px;
+    /* Mobile: line on left */
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--primary-pink);
+    z-index: 0;
+}
+
+.item {
+    position: relative;
+    width: 100%;
+    padding-left: 50px;
+    /* Space for line */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease-out;
+    z-index: 1;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.15);
+    position: relative;
+}
+
+.content::before {
+    content: "❤";
+    position: absolute;
+    left: -40px;
+    /* Position on the line */
+    top: 15px;
+    font-size: 1.5rem;
+    color: var(--hot-pink);
+    background: white;
+    border-radius: 50%;
+    padding: 0 5px;
+}
+
+.content h3 {
+    font-size: 1.5rem;
+    color: var(--hot-pink);
+    margin-bottom: 0.5rem;
+}
+
+.date {
+    font-size: 0.9rem;
+    color: #888;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.content p {
+    line-height: 1.6;
+}
+
+/* Tablet+ */
+@media (min-width: 768px) {
+    .line {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .item {
+        width: 50%;
+        padding-left: 0;
+    }
+
+    .left {
+        align-self: flex-start;
+        padding-right: 30px;
+        text-align: right;
+    }
+
+    .left .content::before {
+        left: auto;
+        right: -40px;
+        /* Adjust for centered line */
+    }
+
+    /* Fix for the heart icon on the right side logic if line is centered */
+    .left .content::before {
+        right: -42px;
+        /* 30px padding + 12px for half line + diff */
+        left: auto;
+    }
+
+    .right {
+        align-self: flex-end;
+        padding-left: 30px;
+        text-align: left;
+    }
+
+    .right .content::before {
+        left: -42px;
+    }
+}

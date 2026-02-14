@@ -1,0 +1,82 @@
+.interactive {
+    padding: 4rem 1rem;
+    width: 100%;
+    min-height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    text-align: center;
+}
+
+.interactive h2 {
+    font-size: 2.5rem;
+    color: var(--hot-pink);
+    margin-bottom: 2rem;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    items-align: center;
+    gap: 2rem;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    align-items: center;
+    position: relative;
+    min-height: 100px;
+    /* Space for movement */
+}
+
+.yesButton,
+.noButton {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-love-light);
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.yesButton {
+    background-color: var(--hot-pink);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+    z-index: 10;
+}
+
+.noButton {
+    background-color: #ddd;
+    color: #555;
+    /* position: absolute; removed absolute to let it flow initially, but translate moves it */
+}
+
+.success h2 {
+    font-size: 3rem;
+    animation: pulse 2s infinite;
+}
+
+.success p {
+    font-size: 1.5rem;
+    color: var(--dark-gray);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

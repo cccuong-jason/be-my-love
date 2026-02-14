@@ -1,33 +1,64 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-gradient: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
+  --hot-pink: #FF69B4;
+  --dark-gray: #333;
+  --font-love-light: 'Love Light', cursive;
+  --font-open-sans: 'Open Sans', sans-serif;
+  --font-great-vibes: 'Great Vibes', cursive;
+  --font-pacifico: 'Pacifico', cursive;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+h1,
+h2,
+h3 {
+  font-family: var(--font-pacifico) !important;
+  /* Override preference */
 }
 
 html,
 body {
   max-width: 100vw;
+  height: 100vh;
+  /* Required for snap on body/html container if we use it, but usually we snap a main container */
   overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
+  font-family: var(--font-open-sans);
+  color: var(--dark-gray);
   margin: 0;
+  padding: 0;
+
+  /* Cinematic Scroll Snap */
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+
+  /* Blazing/Glowing Background Effect */
+  background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffd1ff, #fbc2eb);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+
+  /* Force light mode for this specific romantic theme, or adapt carefully. 
+     User wanted "adorable", usually implies light/pastel. 
+     Let's stick to light mode overrides. */
+  html {
+    color-scheme: light;
+  }
 }
 
 a {
@@ -35,8 +66,6 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+* {
+  box-sizing: border-box;
 }

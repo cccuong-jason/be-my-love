@@ -1,0 +1,118 @@
+.gameSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+}
+
+.gameSection h2 {
+    font-family: var(--font-mynerve), cursive;
+    color: var(--hot-pink);
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+.quizCard {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+.progress {
+    color: #888;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.questionText {
+    color: #444;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.optionsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.optionBtn {
+    padding: 1rem;
+    border: 2px solid #eee;
+    background: white;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #555;
+}
+
+.optionBtn:hover:not(:disabled) {
+    border-color: var(--hot-pink);
+    color: var(--hot-pink);
+}
+
+.optionBtn.correct {
+    background: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.optionBtn.wrong {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.winCard {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
+}
+
+.winCard h3 {
+    color: var(--hot-pink);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.resetBtn {
+    margin-top: 1.5rem;
+    padding: 1rem 2rem;
+    background: var(--hot-pink);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+
+@keyframes popIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+        /* 3 cols on mobile */
+    }
+}

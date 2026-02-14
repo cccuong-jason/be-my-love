@@ -1,0 +1,12 @@
+.footer {
+    padding: 2rem;
+    text-align: center;
+    background: var(--bg-gradient);
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.footer p {
+    margin: 0.5rem 0;
+}

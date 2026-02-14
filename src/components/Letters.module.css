@@ -1,0 +1,109 @@
+.letters {
+    padding: 4rem 1rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--bg-gradient);
+}
+
+.letters h2 {
+    font-size: 2.5rem;
+    color: var(--hot-pink);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+}
+
+.envelope {
+    background-color: var(--bg-color, white);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgba(255, 192, 203, 0.5);
+}
+
+.envelope:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
+}
+
+.front {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    width: 100%;
+    text-align: center;
+}
+
+.open .front {
+    /* Keep title visible but move it up or change style? 
+     For simplicity, let's keep it visible. */
+    margin-bottom: 1rem;
+}
+
+.seal {
+    font-size: 2rem;
+    color: var(--hot-pink);
+    margin-bottom: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.envelope:hover .seal {
+    transform: scale(1.2);
+}
+
+.open .seal {
+    transform: scale(0);
+    /* Hide seal when open */
+    height: 0;
+    margin: 0;
+    opacity: 0;
+}
+
+.envelope h3 {
+    font-size: 1.2rem;
+    color: var(--dark-gray);
+    margin: 0;
+}
+
+.card {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.5s ease;
+    width: 100%;
+    text-align: center;
+}
+
+.open .card {
+    max-height: 200px;
+    /* Adjust as needed */
+    opacity: 1;
+    margin-top: 1rem;
+}
+
+.card p {
+    font-family: var(--font-love-light);
+    /* Or handwritten font */
+    font-size: 1.5rem;
+    color: #555;
+    line-height: 1.4;
+}

@@ -1,0 +1,168 @@
+.journeySection {
+    padding: 4rem 1rem;
+    position: relative;
+    overflow: hidden;
+    /* Clean background to let Global "Blazing" shine through, or semi-transparent white */
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title {
+    font-family: var(--font-mynerve), cursive;
+    font-size: 3rem;
+    color: var(--hot-pink);
+    text-align: center;
+    margin-bottom: 3rem;
+    z-index: 2;
+}
+
+.timelineContainer {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    padding: 2rem 0;
+}
+
+.line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, transparent, var(--hot-pink), transparent);
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.eventRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4rem;
+    position: relative;
+    width: 100%;
+}
+
+/* Content Box Styling */
+.contentBox {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    width: 45%;
+    position: relative;
+    transition: transform 0.3s;
+}
+
+.contentBox:hover {
+    transform: translateY(-5px);
+}
+
+.contentBox h3 {
+    font-size: 1.5rem;
+    color: var(--hot-pink);
+    margin: 0.5rem 0;
+    font-family: var(--font-mynerve), cursive;
+}
+
+.contentBox p {
+    color: #555;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.dateBadge {
+    display: inline-block;
+    background: var(--hot-pink);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.imageContainer {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.eventImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.contentBox:hover .eventImage {
+    transform: scale(1.05);
+}
+
+/* Dot on the line */
+.dot {
+    position: absolute;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 2px solid var(--hot-pink);
+    border-radius: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--hot-pink);
+    font-size: 1.2rem;
+    z-index: 5;
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
+}
+
+/* Directional Specifics */
+.left {
+    justify-content: flex-start;
+}
+
+.left .contentBox {
+    margin-left: auto;
+    margin-right: calc(50% + 40px);
+    /* 50% + half dot width + gap */
+}
+
+.right {
+    justify-content: flex-end;
+}
+
+.right .contentBox {
+    margin-right: auto;
+    margin-left: calc(50% + 40px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .line {
+        left: 20px;
+    }
+
+    .eventRow {
+        justify-content: flex-start !important;
+        /* Force all to left alignment relative to container, but right relative to line */
+        margin-left: 0;
+    }
+
+    .left .contentBox,
+    .right .contentBox {
+        width: calc(100% - 60px);
+        margin-left: 50px;
+        /* Space for line */
+        margin-right: 0;
+    }
+
+    .dot {
+        left: 20px;
+    }
+}
