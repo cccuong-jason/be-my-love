@@ -49,46 +49,60 @@ import HeartPop from "@/components/Effects/HeartPop";
 import MusicPlayer from "@/components/MusicPlayer";
 import FloatingAssets from "@/components/FloatingAssets";
 
-// ... imports
+// Check if Clerk key is available (may not be during static prerendering on Vercel)
+const hasClerkKey = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+function AuthHeader() {
+  if (!hasClerkKey) return null;
+  return (
+    <div style={{ pointerEvents: 'auto', display: 'flex', gap: '15px', alignItems: 'center' }}>
+      <SignedOut>
+        <SignInButton mode="modal">
+          <button className="auth-btn" style={{ padding: '8px 16px', background: 'white', border: 'none', borderRadius: '20px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', cursor: 'pointer', fontWeight: 'bold', color: '#ff4d4d' }}>
+            Sign In
+          </button>
+        </SignInButton>
+      </SignedOut>
+      <SignedIn>
+        <a href="/dashboard" style={{ textDecoration: 'none', color: '#ff4d4d', fontWeight: 'bold', background: 'rgba(255,255,255,0.8)', padding: '5px 12px', borderRadius: '15px' }}>
+          Dashboard
+        </a>
+        <UserButton />
+      </SignedIn>
+    </div>
+  );
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${mynerve.variable} ${openSans.variable} ${greatVibes.variable} ${pacifico.variable} antialiased`}>
-          <header style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 1000, display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
-            <div style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Image src="/logo.png" alt="Be My Love Logo" width={50} height={50} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} />
-              <span style={{ fontFamily: 'var(--font-pacifico), cursive', fontSize: '1.8rem', color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>Be My Love</span>
-            </div>
-            <div style={{ pointerEvents: 'auto', display: 'flex', gap: '15px', alignItems: 'center' }}>
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <button className="auth-btn" style={{ padding: '8px 16px', background: 'white', border: 'none', borderRadius: '20px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', cursor: 'pointer', fontWeight: 'bold', color: '#ff4d4d' }}>
-                    Sign In
-                  </button>
-                </SignInButton>
-              </SignedOut>
-              <SignedIn>
-                <a href="/dashboard" style={{ textDecoration: 'none', color: '#ff4d4d', fontWeight: 'bold', background: 'rgba(255,255,255,0.8)', padding: '5px 12px', borderRadius: '15px' }}>
-                  Dashboard
-                </a>
-                <UserButton />
-              </SignedIn>
-            </div>
-          </header>
-          <EditorProvider>
-            <HeartPop />
-            <FloatingAssets />
-            <MusicPlayer />
-            {children}
-          </EditorProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+  const content = (
+    <html lang="en">
+      <body className={`${mynerve.variable} ${openSans.variable} ${greatVibes.variable} ${pacifico.variable} antialiased`}>
+        <header style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 1000, display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
+          <div style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Image src="/logo.png" alt="Be My Love Logo" width={50} height={50} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} />
+            <span style={{ fontFamily: 'var(--font-pacifico), cursive', fontSize: '1.8rem', color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>Be My Love</span>
+          </div>
+          <AuthHeader />
+        </header>
+        <EditorProvider>
+          <HeartPop />
+          <FloatingAssets />
+          <MusicPlayer />
+          {children}
+        </EditorProvider>
+      </body>
+    </html>
   );
+
+  // Wrap with ClerkProvider only if the key is available
+  if (hasClerkKey) {
+    return <ClerkProvider>{content}</ClerkProvider>;
+  }
+
+  return content;
 }
+
