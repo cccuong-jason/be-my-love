@@ -12,11 +12,18 @@ export interface ContentState {
     };
     timeline: {
         title: string;
-        events: { date: string; title: string; description: string; image?: string }[];
+        events: { id: string; date: string; title: string; description: string; image?: string }[];
     };
     quiz: {
         title: string;
-        questions: { question: string; options: string[]; answer: number }[]; // answer is index
+        questions: {
+            question: string;
+            options: string[];
+            answer: number;
+            image?: string;
+            celebration?: string;
+        }[];
+        celebrationText: string; // fallback
     };
     letters: {
         title: string;
@@ -50,19 +57,38 @@ export const defaultContent = {
     timeline: {
         title: "Our Journey",
         events: [
-            { date: "2023-10-15", title: "First Met", description: "The moment time stood still.", image: "https://picsum.photos/id/10/400/600" },
-            { date: "2023-11-20", title: "First Date", description: "Coffee, laughter, and a spark.", image: "https://picsum.photos/id/11/400/600" },
-            { date: "2024-02-14", title: "First Valentine", description: "Adventures together begin.", image: "https://picsum.photos/id/12/400/600" },
-            { date: "2024-05-01", title: "Forever", description: "Writing our story, day by day.", image: "" },
+            { id: "1", date: "2023-10-15", title: "First Met", description: "The moment time stood still.", image: "https://picsum.photos/id/10/400/600" },
+            { id: "2", date: "2023-11-20", title: "First Date", description: "Coffee, laughter, and a spark.", image: "https://picsum.photos/id/11/400/600" },
+            { id: "3", date: "2024-02-14", title: "First Valentine", description: "Adventures together begin.", image: "https://picsum.photos/id/12/400/600" },
+            { id: "4", date: "2024-05-01", title: "Forever", description: "Writing our story, day by day.", image: "" },
         ],
     },
     quiz: {
         title: "How Well Do You Know Us?",
         questions: [
-            { question: "Where was our first date?", options: ["Coffee Shop", "Park", "Cinema", "Moon"], answer: 0 },
-            { question: "Who said 'I love you' first?", options: ["Me", "You", "Both at once", "My Cat"], answer: 0 },
-            { question: "What is my favorite food?", options: ["Pizza", "Sushi", "Tacos", "Love"], answer: 1 },
+            {
+                question: "Where was our first date?",
+                options: ["Coffee Shop", "Park", "Cinema", "Moon"],
+                answer: 0,
+                image: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?auto=format&fit=crop&w=500&q=60",
+                celebration: "That latte art was almost as cute as you! ☕"
+            },
+            {
+                question: "Who said 'I love you' first?",
+                options: ["Me", "You", "Both at once", "My Cat"],
+                answer: 0,
+                image: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=500&q=60",
+                celebration: "I couldn't help it! You're too lovable! 🥰"
+            },
+            {
+                question: "What is my favorite food?",
+                options: ["Pizza", "Sushi", "Tacos", "Love"],
+                answer: 1,
+                image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=60",
+                celebration: "Sushi dates are the best dates! 🍣"
+            },
         ],
+        celebrationText: "Correct! We are a perfect match! ❤"
     },
     letters: {
         title: "Love Notes",

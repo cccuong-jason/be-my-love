@@ -5,7 +5,6 @@ import { useContentStore } from '@/store/contentStore';
 export default function MusicPlayer() {
     const music = useContentStore((state) => state.music);
     const [isPlaying, setIsPlaying] = useState(false);
-    const audioRef = useRef<HTMLAudioElement>(null);
     const [ytPlayer, setYtPlayer] = useState<any>(null);
 
     // Helper to extract ID
@@ -88,35 +87,43 @@ export default function MusicPlayer() {
         setIsPlaying(!isPlaying);
     };
 
+    const [isPublic, setIsPublic] = useState(false);
+
+    useEffect(() => {
+        setIsPublic(new URLSearchParams(window.location.search).get('public') === 'true');
+    }, []);
+
     if (!videoId) return null;
 
     return (
         <>
             <div id="youtube-player" style={{ position: 'absolute', top: -9999, left: -9999 }}></div>
-            <button
-                onClick={togglePlay}
-                style={{
-                    position: 'fixed',
-                    bottom: '30px',
-                    left: '30px',
-                    width: '50px',
-                    height: '50px',
-                    borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.8)',
-                    border: '2px solid var(--hot-pink)',
-                    color: 'var(--hot-pink)',
-                    zIndex: 1000,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.5rem',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
-                }}
-                title={isPlaying ? "Pause Music" : "Play Music"}
-            >
-                {isPlaying ? '⏸' : '▶'}
-            </button>
+            {!isPublic && (
+                <button
+                    onClick={togglePlay}
+                    style={{
+                        position: 'fixed',
+                        bottom: '30px',
+                        left: '30px',
+                        width: '50px',
+                        height: '50px',
+                        borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.8)',
+                        border: '2px solid var(--hot-pink)',
+                        color: 'var(--hot-pink)',
+                        zIndex: 1000,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.5rem',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
+                    }}
+                    title={isPlaying ? "Pause Music" : "Play Music"}
+                >
+                    {isPlaying ? '⏸' : '▶'}
+                </button>
+            )}
         </>
     );
 }

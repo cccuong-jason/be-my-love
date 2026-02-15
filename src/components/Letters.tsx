@@ -32,16 +32,18 @@ export default function Letters() {
                 {letters.items.map((letter) => (
                     <div
                         key={letter.id}
-                        className={`${styles.envelope} ${openId === letter.id ? styles.open : ''}`}
+                        className={`${styles.envelopeContainer} ${openId === letter.id ? styles.open : ''}`}
                         onClick={() => handleOpen(letter.id)}
-                        style={{ '--bg-color': letter.color } as React.CSSProperties}
                     >
-                        <div className={styles.front}>
+                        <div className={styles.envelopeBody} style={{ '--bg-color': letter.color } as React.CSSProperties}>
+                            <div className={styles.flap}></div>
+                            <div className={styles.pocket}></div>
+                            <div className={styles.letterContent}>
+                                <h3>{letter.title}</h3>
+                                <p>{letter.content}</p>
+                            </div>
                             <div className={styles.seal}>❤</div>
-                            <h3>{letter.title}</h3>
-                        </div>
-                        <div className={styles.card}>
-                            <p>{letter.content}</p>
+                            <div className={styles.frontLabel}>{letter.title}</div>
                         </div>
                     </div>
                 ))}

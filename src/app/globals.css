@@ -21,15 +21,18 @@ body {
   height: 100vh;
   /* Required for snap on body/html container if we use it, but usually we snap a main container */
   overflow-x: hidden;
-  font-family: var(--font-open-sans);
+  font-family: var(--font-mynerve), cursive;
+  /* User Request: All Text Mynerve */
   color: var(--dark-gray);
   margin: 0;
   padding: 0;
 
   /* Cinematic Scroll Snap */
   scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
+  scroll-behavior: auto !important;
+  /* Force snappy */
   overflow-y: scroll;
+  scroll-padding-top: 0;
 
   /* Blazing/Glowing Background Effect */
   background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffd1ff, #fbc2eb);

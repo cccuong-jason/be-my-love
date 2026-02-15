@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 import EditorProvider from "@/components/Editor/EditorProvider";
 import HeartPop from "@/components/Effects/HeartPop";
 import MusicPlayer from "@/components/MusicPlayer";
-import ScrollIndicator from "@/components/Effects/ScrollIndicator";
+import FloatingAssets from "@/components/FloatingAssets";
 
 // ... imports
 
@@ -47,8 +47,8 @@ export default function RootLayout({
       <body className={`${mynerve.variable} ${openSans.variable} ${greatVibes.variable} ${pacifico.variable} antialiased`}>
         <EditorProvider>
           <HeartPop />
+          <FloatingAssets />
           <MusicPlayer />
-          <ScrollIndicator />
           {children}
         </EditorProvider>
       </body>

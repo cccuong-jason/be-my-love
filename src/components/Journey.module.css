@@ -7,6 +7,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .title {
@@ -21,7 +22,8 @@
 .timelineContainer {
     position: relative;
     width: 100%;
-    max-width: 1000px;
+    max-width: 1200px;
+    /* Wider */
     padding: 2rem 0;
 }
 
@@ -30,96 +32,92 @@
     left: 50%;
     top: 0;
     bottom: 0;
-    width: 4px;
-    background: linear-gradient(to bottom, transparent, var(--hot-pink), transparent);
+    width: 2px;
+    background-image: linear-gradient(to bottom, var(--hot-pink) 33%, rgba(255, 255, 255, 0) 0%);
+    background-position: right;
+    background-size: 2px 20px;
+    background-repeat: repeat-y;
     transform: translateX(-50%);
-    border-radius: 2px;
 }
 
 .eventRow {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 4rem;
+    /* More space */
     position: relative;
     width: 100%;
+    margin-bottom: 10px;
 }
 
-/* Content Box Styling */
 .contentBox {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    background: #fffafa;
+    padding: 2rem;
+    border-radius: 4px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     width: 45%;
+    max-width: 600px;
     position: relative;
     transition: transform 0.3s;
+    text-align: center;
+    margin: 0 auto;
+    overflow: hidden;
 }
 
-.contentBox:hover {
-    transform: translateY(-5px);
-}
-
-.contentBox h3 {
-    font-size: 1.5rem;
-    color: var(--hot-pink);
-    margin: 0.5rem 0;
-    font-family: var(--font-mynerve), cursive;
-}
-
-.contentBox p {
-    color: #555;
-    line-height: 1.6;
-    font-size: 0.95rem;
+.innerBorder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .dateBadge {
-    display: inline-block;
-    background: var(--hot-pink);
-    color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+    font-family: var(--font-mynerve), cursive;
+    margin-bottom: 1rem;
+    color: #888;
+    font-size: 1.2rem;
 }
 
 .imageContainer {
     width: 100%;
-    height: 200px;
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
     margin-bottom: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .eventImage {
     width: 100%;
-    height: 100%;
+    height: auto;
+    display: block;
     object-fit: cover;
-    transition: transform 0.5s;
+    transition: transform 0.5s ease;
 }
 
 .contentBox:hover .eventImage {
     transform: scale(1.05);
 }
 
-/* Dot on the line */
+/* ... */
+
+/* Heart Icon Container */
 .dot {
     position: absolute;
     left: 50%;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    /* Larger */
+    height: 30px;
     background: white;
     border: 2px solid var(--hot-pink);
     border-radius: 50%;
     transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--hot-pink);
-    font-size: 1.2rem;
     z-index: 5;
-    box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    /* Visible heart */
+    color: var(--hot-pink);
 }
 
 /* Directional Specifics */
@@ -129,8 +127,7 @@
 
 .left .contentBox {
     margin-left: auto;
-    margin-right: calc(50% + 40px);
-    /* 50% + half dot width + gap */
+    margin-right: calc(50% + 30px);
 }
 
 .right {
@@ -139,7 +136,7 @@
 
 .right .contentBox {
     margin-right: auto;
-    margin-left: calc(50% + 40px);
+    margin-left: calc(50% + 30px);
 }
 
 /* Responsive */
