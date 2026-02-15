@@ -1,109 +1,247 @@
 .letters {
-    padding: 4rem 1rem;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: var(--bg-gradient);
+    perspective: 1000px;
 }
 
 .letters h2 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: var(--hot-pink);
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
     text-align: center;
+    font-family: var(--font-mynerve), cursive;
 }
 
 .container {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    flex-direction: row;
+    /* Horizontal Stack */
+    justify-content: center;
+    flex-wrap: wrap;
+    /* Wrap on small screens? Or scroll? Let's wrap but overlapping */
+    gap: 0;
     width: 100%;
-    max-width: 600px;
+    max-width: 1000px;
+    /* Wider container */
+    align-items: center;
+    margin-top: 4rem;
+    padding-bottom: 5rem;
+    /* Extra space for overflow content/Quiz overlap */
 }
 
-.envelope {
-    background-color: var(--bg-color, white);
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    cursor: pointer;
-    transition: all 0.4s ease;
+/* Wrapper for positioning and perspective */
+.envelopeContainer {
+    width: 300px;
+    /* Fixed width for better stacking control */
+    height: 200px;
     position: relative;
-    overflow: hidden;
-    min-height: 100px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    margin-right: -100px;
+    /* Horizontal Overlap */
+    margin-bottom: 2rem;
+    /* Vertical spacing if wrapped */
+}
+
+/* Pop up on hover */
+.envelopeContainer:hover {
+    transform: translateY(-40px) rotate(0deg) !important;
+    z-index: 50 !important;
+    margin-right: 20px;
+    /* Give it space */
+}
+
+.envelopeContainer:nth-child(odd) {
+    transform: rotate(-2deg);
+}
+
+.envelopeContainer:nth-child(even) {
+    transform: rotate(2deg);
+}
+
+/* Open state: move to front and center? or just flip? */
+.envelopeContainer.open {
+    margin-bottom: 250px;
+    /* Make space for letter */
+    transform: rotate(0) scale(1.1) !important;
+    z-index: 20 !important;
+}
+
+.envelopeBody {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color, #ffc0cb);
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ... flaps ... */
+.flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    border-top: 100px solid #d88fa5;
+    /* Adjusted height */
+    border-left: 150px solid transparent;
+    /* Half of 300px */
+    border-right: 150px solid transparent;
+    /* Half of 300px */
+    transform-origin: top;
+    transition: transform 0.6s ease-in-out, z-index 0.6s;
+    z-index: 5;
+}
+
+.open .flap {
+    transform: rotateX(180deg);
+    z-index: 1;
+}
+
+.pocket {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    border-bottom: 100px solid #ffb6c1;
+    border-left: 150px solid transparent;
+    /* Half of 300px */
+    border-right: 150px solid transparent;
+    /* Half of 300px */
+    z-index: 3;
+    pointer-events: none;
+}
+
+.seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5rem;
+    color: #e91e63;
+    z-index: 6;
+    transition: opacity 0.3s;
+}
+
+.open .seal {
+    opacity: 0;
+}
+
+.frontLabel {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mynerve), cursive;
+    font-size: 1.5rem;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    z-index: 6;
+    transition: opacity 0.3s;
+}
+
+.open .frontLabel {
+    opacity: 0;
+}
+
+/* The Letter Content - Hidden by default */
+.letterContent {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    /* Behind everything initially */
+    opacity: 0;
+    /* Fully hidden */
+    transform: translateY(50px);
+    transition: all 0.8s ease-in-out;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid rgba(255, 192, 203, 0.5);
-}
-
-.envelope:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
-}
-
-.front {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: opacity 0.3s ease;
-    width: 100%;
     text-align: center;
 }
 
-.open .front {
-    /* Keep title visible but move it up or change style? 
-     For simplicity, let's keep it visible. */
-    margin-bottom: 1rem;
-}
-
-.seal {
-    font-size: 2rem;
-    color: var(--hot-pink);
-    margin-bottom: 0.5rem;
-    transition: transform 0.3s ease;
-}
-
-.envelope:hover .seal {
-    transform: scale(1.2);
-}
-
-.open .seal {
-    transform: scale(0);
-    /* Hide seal when open */
-    height: 0;
-    margin: 0;
-    opacity: 0;
-}
-
-.envelope h3 {
-    font-size: 1.2rem;
-    color: var(--dark-gray);
-    margin: 0;
-}
-
-.card {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: all 0.5s ease;
-    width: 100%;
-    text-align: center;
-}
-
-.open .card {
-    max-height: 200px;
-    /* Adjust as needed */
+.open .letterContent {
+    transform: translateY(-150px);
+    z-index: 4;
+    /* Above pocket */
     opacity: 1;
-    margin-top: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.card p {
-    font-family: var(--font-love-light);
-    /* Or handwritten font */
-    font-size: 1.5rem;
+.letterContent h3 {
+    margin: 0 0 1rem 0;
+    color: var(--hot-pink);
+    font-family: var(--font-mynerve), cursive;
+}
+
+.letterContent p {
+    font-size: 1.1rem;
     color: #555;
-    line-height: 1.4;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        gap: 3rem;
+        /* More space for vertical stacking */
+        margin-top: 2rem;
+        padding-bottom: 8rem;
+    }
+
+    .envelopeContainer {
+        width: 90%;
+        max-width: 300px;
+        margin-right: 0;
+        margin-bottom: -40px;
+        /* Vertical overlap */
+    }
+
+    .envelopeContainer:hover {
+        margin-right: 0;
+        margin-bottom: 0;
+        transform: translateY(-20px) !important;
+    }
+
+    .envelopeContainer.open {
+        margin-bottom: 300px;
+        /* More space for open letter */
+    }
+
+    .flap {
+        border-top-width: 100px;
+        border-left-width: 45vw;
+        border-right-width: 45vw;
+    }
+
+    /* Adjust specific borders if max-width kicks in */
+    .flap,
+    .pocket {
+        border-left-width: 150px;
+        /* Match max-width 300px / 2 */
+        border-right-width: 150px;
+    }
+
+    /* But on very small screens < 300px? unlikely but */
+    @media (max-width: 340px) {
+
+        .flap,
+        .pocket {
+            border-left-width: 45vw;
+            border-right-width: 45vw;
+        }
+    }
 }

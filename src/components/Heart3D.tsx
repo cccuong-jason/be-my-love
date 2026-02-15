@@ -65,7 +65,7 @@ export default function Heart3D() {
     const hero = useContentStore((state) => state.hero);
 
     return (
-        <Canvas style={{ height: '500px', width: '100%' }} camera={{ position: [0, 0, 5], fov: 45 }}>
+        <Canvas style={{ height: '100%', width: '100%' }} camera={{ position: [0, 0, 5], fov: 45 }}>
             <ambientLight intensity={0.5} />
             <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
             <pointLight position={[-10, -10, -10]} intensity={1} />

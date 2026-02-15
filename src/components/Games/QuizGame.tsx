@@ -96,7 +96,13 @@ export default function QuizGame() {
         <section className={styles.gameSection}>
             <h2>{quiz.title}</h2>
             <div className={styles.quizCard}>
-                <div className={styles.progress}>Question {currentQ + 1} / {quiz.questions.length}</div>
+                <div className={styles.progressBarContainer}>
+                    <div
+                        className={styles.progressBarFill}
+                        style={{ width: `${((currentQ + 1) / quiz.questions.length) * 100}%` }}
+                    ></div>
+                </div>
+                <div className={styles.progressText}>Question {currentQ + 1} of {quiz.questions.length}</div>
                 <h3 className={styles.questionText}>{question.question}</h3>
 
                 <div className={styles.optionsGrid}>

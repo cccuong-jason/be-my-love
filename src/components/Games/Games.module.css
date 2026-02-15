@@ -3,116 +3,218 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 2rem;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(5px);
+    padding: 6rem 1rem;
+    position: relative;
+    width: 100%;
 }
 
 .gameSection h2 {
     font-family: var(--font-mynerve), cursive;
     color: var(--hot-pink);
-    font-size: 3rem;
-    margin-bottom: 2rem;
+    font-size: 3.5rem;
+    margin-bottom: 3rem;
+    text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8);
 }
 
+/* Main Card */
 .quizCard {
-    background: white;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.1),
+        0 10px 15px rgba(255, 105, 180, 0.1);
+    /* Subtle pink glow */
+    max-width: 700px;
     width: 100%;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Progress Bar */
+.progressBarContainer {
+    width: 100%;
+    height: 8px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.progressBarFill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff9a9e 0%, #ff1493 100%);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+}
+
+.progressText {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Question */
+.questionText {
+    color: #1f2937;
+    font-size: 2rem;
+    line-height: 1.3;
+    margin-bottom: 2.5rem;
+    font-family: var(--font-open-sans), sans-serif;
+    /* More readable for questions */
+    font-weight: 600;
     text-align: center;
 }
 
-.progress {
-    color: #888;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-
-.questionText {
-    color: #444;
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
-}
-
+/* Options Grid */
 .optionsGrid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+    width: 100%;
 }
 
 .optionBtn {
-    padding: 1rem;
-    border: 2px solid #eee;
+    padding: 1.25rem 1.5rem;
     background: white;
-    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 16px;
     font-size: 1.1rem;
+    color: #4b5563;
     cursor: pointer;
-    transition: all 0.2s;
-    color: #555;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
 }
 
-.optionBtn:hover:not(:disabled) {
-    border-color: var(--hot-pink);
-    color: var(--hot-pink);
+/* Hover State (Desktop) */
+@media (hover: hover) {
+    .optionBtn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        border-color: var(--hot-pink);
+        color: var(--hot-pink);
+        box-shadow: 0 4px 12px rgba(255, 105, 180, 0.15);
+    }
 }
 
+/* Active/Click State */
+.optionBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Correct/Wrong States */
 .optionBtn.correct {
-    background: #d4edda;
-    border-color: #c3e6cb;
-    color: #155724;
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #047857;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
 
 .optionBtn.wrong {
-    background: #f8d7da;
-    border-color: #f5c6cb;
-    color: #721c24;
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #b91c1c;
+    animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
 }
 
+/* Win Card */
 .winCard {
     background: white;
-    padding: 3rem;
-    border-radius: 20px;
+    padding: 4rem 2rem;
+    border-radius: 24px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .winCard h3 {
     color: var(--hot-pink);
     font-size: 2.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-mynerve), cursive;
+}
+
+.winCard p {
+    color: #6b7280;
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
 }
 
 .resetBtn {
-    margin-top: 1.5rem;
-    padding: 1rem 2rem;
+    padding: 1rem 3rem;
     background: var(--hot-pink);
     color: white;
     border: none;
-    border-radius: 50px;
-    font-size: 1.2rem;
+    border-radius: 9999px;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s box-shadow 0.2s;
+    box-shadow: 0 10px 20px rgba(255, 20, 147, 0.3);
 }
 
+.resetBtn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(255, 20, 147, 0.4);
+}
 
-@keyframes popIn {
-    0% {
-        transform: scale(0);
-        opacity: 0;
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
     }
 
-    100% {
-        transform: scale(1);
-        opacity: 1;
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
     }
 }
 
-@media (max-width: 600px) {
-    .grid {
-        grid-template-columns: repeat(3, 1fr);
-        /* 3 cols on mobile */
+@media (max-width: 640px) {
+    .gameSection {
+        padding: 4rem 1rem;
+    }
+
+    .quizCard {
+        padding: 2rem 1.5rem;
+        border-radius: 20px;
+    }
+
+    .questionText {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .optionsGrid {
+        grid-template-columns: 1fr;
+        /* Stack on mobile */
+    }
+
+    .optionBtn {
+        padding: 1rem;
+        min-height: 3.5rem;
+        /* Better touch target */
     }
 }

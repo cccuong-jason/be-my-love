@@ -34,7 +34,7 @@
     border: none;
     box-shadow: 0 4px 20px rgba(255, 105, 180, 0.5);
     cursor: pointer;
-    z-index: 1000;
+    z-index: 9998;
     font-size: 1.8rem;
     display: flex;
     justify-content: center;
@@ -55,7 +55,7 @@
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
-    z-index: 1001;
+    z-index: 9999;
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
@@ -142,77 +142,148 @@
     gap: 0.8rem;
 }
 
-.fieldGroup label {
-    font-size: 0.85rem;
+/* Modern Inputs */
+.modernGroup {
+    margin-bottom: 2rem;
+}
+
+.modernGroup h4 {
+    margin: 0 0 1rem 0;
+    color: var(--hot-pink);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.inputRow {
+    display: flex;
+    gap: 1rem;
+}
+
+.floatingInput {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+/* Material Floating Label */
+.floatingInput input {
+    width: 100%;
+    padding: 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background: white;
+}
+
+.floatingInput input:focus {
+    border-color: var(--hot-pink);
+    box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.1);
+}
+
+.floatingInput label {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    padding: 0 5px;
+    color: #999;
+    font-size: 0.9rem;
+    pointer-events: none;
+    transition: all 0.3s;
+}
+
+.floatingInput input:focus+label,
+.floatingInput input:not(:placeholder-shown)+label {
+    top: 0;
+    color: var(--hot-pink);
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Card Edit Block */
+.cardEdit {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+    position: relative;
+    border: 1px solid #eee;
+}
+
+.cardIndex {
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background: var(--hot-pink);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.cleanInput {
+    border: none;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    padding: 8px 0;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.cleanInput:focus {
+    border-bottom: 1px solid var(--hot-pink);
+    outline: none;
+}
+
+.dateAndImg {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.uploadBtn {
+    font-size: 0.8rem;
+    background: #f0f0f0;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
     font-weight: 600;
     color: #555;
 }
 
-.drawerInput {
-    padding: 0.6rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    transition: border-color 0.2s;
-}
-
-.drawerInput:focus {
-    border-color: var(--hot-pink);
-    outline: none;
-}
-
-.tinyNote {
-    font-size: 0.75rem;
-    color: #888;
-    font-style: italic;
-    margin: 0;
-}
-
-.imageInputRow {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.imageInputRow .drawerInput {
-    flex: 1;
-}
-
-.fileLabel {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 1rem;
-    background: #eee;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: background 0.2s;
-}
-
-.fileLabel:hover {
-    background: #ddd;
-}
-
 .footerAction {
     padding: 1.5rem;
-    border-top: 1px solid #eee;
-    background: #fff;
+    background: white;
+    border-top: 1px solid #f0f0f0;
+    text-align: center;
+}
+
+.shareHint {
+    margin: 10px 0 0 0;
+    font-size: 0.8rem;
+    color: #888;
 }
 
 .shareBtn {
     width: 100%;
     padding: 1rem;
-    background: var(--hot-pink);
+    background: linear-gradient(45deg, #ff69b4, #ff8da1);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 30px;
+    font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 1rem;
-    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+    box-shadow: 0 5px 20px rgba(255, 105, 180, 0.4);
     transition: transform 0.2s;
 }
 
 .shareBtn:hover {
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.5);
 }

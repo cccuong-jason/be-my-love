@@ -1,82 +1,97 @@
 .interactive {
-    padding: 4rem 1rem;
-    width: 100%;
-    min-height: 50vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: white;
-    text-align: center;
-}
-
-.interactive h2 {
-    font-size: 2.5rem;
-    color: var(--hot-pink);
-    margin-bottom: 2rem;
+    padding: 2rem;
+    /* background on parent handles gradient */
 }
 
 .container {
-    display: flex;
-    flex-direction: column;
-    items-align: center;
-    gap: 2rem;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 3rem;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+}
+
+.container h2 {
+    font-family: var(--font-mynerve), cursive;
+    font-size: 3rem;
+    color: var(--hot-pink);
+    margin-bottom: 3rem;
 }
 
 .buttons {
     display: flex;
-    justify-content: center;
     gap: 2rem;
+    justify-content: center;
     align-items: center;
-    position: relative;
-    min-height: 100px;
-    /* Space for movement */
-}
-
-.yesButton,
-.noButton {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    border-radius: 50px;
-    border: none;
-    cursor: pointer;
-    font-family: var(--font-love-light);
-    font-weight: bold;
-    transition: all 0.2s ease;
+    height: 100px;
+    /* Space for moving button */
 }
 
 .yesButton {
-    background-color: var(--hot-pink);
+    padding: 1rem 3rem;
+    background: var(--hot-pink);
     color: white;
-    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
-    z-index: 10;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+}
+
+.yesButton:hover {
+    transform: scale(1.05);
 }
 
 .noButton {
-    background-color: #ddd;
+    padding: 1rem 2rem;
+    background: #eee;
     color: #555;
-    /* position: absolute; removed absolute to let it flow initially, but translate moves it */
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.success {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    padding: 3rem;
+    border-radius: 30px;
+    text-align: center;
+    animation: fadeIn 1s;
 }
 
 .success h2 {
-    font-size: 3rem;
-    animation: pulse 2s infinite;
+    font-family: var(--font-pacifico);
+    font-size: 4rem;
+    color: var(--hot-pink);
+    margin-bottom: 1rem;
 }
 
 .success p {
     font-size: 1.5rem;
-    color: var(--dark-gray);
+    color: #444;
 }
 
-@keyframes pulse {
-    0% {
-        transform: scale(1);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
 
-    50% {
-        transform: scale(1.1);
-    }
-
-    100% {
-        transform: scale(1);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

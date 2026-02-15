@@ -29,10 +29,10 @@ export default function Hero() {
                 <p>
                     <EditableText section="hero" field="subtitle" value={hero.subtitle} />
                 </p>
+
             </div>
-            <div className={styles.canvasContainer}>
-                <Heart3D />
-            </div>
+
+
         </section>
     );
 }
