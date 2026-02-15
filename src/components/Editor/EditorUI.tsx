@@ -67,6 +67,7 @@ export default function EditorUI() {
     const timeline = useContentStore((state) => state.timeline);
     const quiz = useContentStore((state) => state.quiz);
     const letters = useContentStore((state) => state.letters);
+    const interactive = useContentStore((state) => state.interactive);
     const musicUrl = useContentStore((state) => state.music.url);
 
     // UI Feedback State
@@ -649,6 +650,80 @@ export default function EditorUI() {
                         >
                             + Add Love Note
                         </button>
+                    </AccordionItem>
+
+                    <AccordionItem title="Proposal (Interactive)">
+                        <div className={styles.floatingInput}>
+                            <input
+                                placeholder=" "
+                                value={interactive.question}
+                                onChange={(e) => updateSection('interactive', { question: e.target.value })}
+                            />
+                            <label>Proposal Question</label>
+                        </div>
+                        <div className={styles.floatingInput}>
+                            <input
+                                placeholder=" "
+                                value={interactive.yesText}
+                                onChange={(e) => updateSection('interactive', { yesText: e.target.value })}
+                            />
+                            <label>Yes Button Text</label>
+                        </div>
+
+                        <div style={{ margin: '1.5rem 0' }}>
+                            <label style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', display: 'block' }}>"No" Button Options (Cycle)</label>
+                            {interactive.noTexts.map((text: string, idx: number) => (
+                                <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                    <input
+                                        className={styles.cleanInput}
+                                        value={text}
+                                        onChange={(e) => {
+                                            const newTexts = [...interactive.noTexts];
+                                            newTexts[idx] = e.target.value;
+                                            updateSection('interactive', { noTexts: newTexts });
+                                        }}
+                                    />
+                                    <button
+                                        className={`${styles.controlBtn} ${styles.danger}`}
+                                        onClick={() => {
+                                            const newTexts = interactive.noTexts.filter((_: any, i: number) => i !== idx);
+                                            updateSection('interactive', { noTexts: newTexts });
+                                        }}
+                                        title="Remove Option"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                </div>
+                            ))}
+                            <button
+                                className={styles.addBtn}
+                                style={{ marginTop: '0.5rem' }}
+                                onClick={() => {
+                                    const newTexts = [...interactive.noTexts, "No"];
+                                    updateSection('interactive', { noTexts: newTexts });
+                                }}
+                            >
+                                + Add Option
+                            </button>
+                        </div>
+
+                        <div className={styles.floatingInput}>
+                            <input
+                                placeholder=" "
+                                value={interactive.successTitle}
+                                onChange={(e) => updateSection('interactive', { successTitle: e.target.value })}
+                            />
+                            <label>Success Title</label>
+                        </div>
+                        <div className={styles.floatingInput}>
+                            <textarea
+                                placeholder=" "
+                                value={interactive.successText}
+                                onChange={(e) => updateSection('interactive', { successText: e.target.value })}
+                                style={{ paddingTop: '1.5rem', minHeight: '80px', resize: 'vertical' }}
+                            />
+                            <label>Success Message</label>
+                        </div>
                     </AccordionItem>
 
                     <AccordionItem title="Background Music">
