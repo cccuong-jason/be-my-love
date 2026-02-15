@@ -13,21 +13,31 @@ export default function QuizGame() {
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [isWrong, setIsWrong] = useState(false);
 
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+
     const handleAnswer = (index: number) => {
+        const currentQuestion = quiz.questions[currentQ];
         setSelectedOption(index);
 
-        if (index === quiz.questions[currentQ].answer) {
+        if (index === currentQuestion.answer) {
             // Correct
+            const message = currentQuestion.celebration || "Correct! 🎉";
+            setToastMessage(message);
+            setShowToast(true);
+
+            // Wait for toast to be read before moving on
             setTimeout(() => {
+                setShowToast(false);
                 if (currentQ < quiz.questions.length - 1) {
                     setCurrentQ(currentQ + 1);
                     setSelectedOption(null);
                 } else {
-                    setScore(score + 1); // just for internal tracking logic if needed
+                    setScore(score + 1);
                     setFinished(true);
                     triggerWin();
                 }
-            }, 800);
+            }, 2000); // 2 seconds to read the cute message
         } else {
             // Wrong
             setIsWrong(true);
@@ -83,7 +93,7 @@ export default function QuizGame() {
                     className={styles.winCard}
                 >
                     <h3>❤️ Perfect Score! ❤️</h3>
-                    <p>You know us properly!</p>
+                    <p>{quiz.celebrationText || "You know us properly!"}</p>
                     <button onClick={restart} className={styles.resetBtn}>Play Again</button>
                 </motion.div>
             </section>
@@ -103,6 +113,17 @@ export default function QuizGame() {
                     ></div>
                 </div>
                 <div className={styles.progressText}>Question {currentQ + 1} of {quiz.questions.length}</div>
+
+                {question.image && (
+                    <div className={styles.questionImageContainer}>
+                        <img
+                            src={question.image}
+                            alt="Question Illustration"
+                            className={styles.questionImage}
+                        />
+                    </div>
+                )}
+
                 <h3 className={styles.questionText}>{question.question}</h3>
 
                 <div className={styles.optionsGrid}>
@@ -117,6 +138,19 @@ export default function QuizGame() {
                         </button>
                     ))}
                 </div>
+
+                <AnimatePresence>
+                    {showToast && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className={styles.toast}
+                        >
+                            {toastMessage}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </section>
     );

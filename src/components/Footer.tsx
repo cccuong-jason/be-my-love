@@ -9,7 +9,7 @@ export default function Footer() {
     return (
         <footer className={styles.footer}>
             <p>
-                Made with love from <EditableText section="couple" field="yourName" value={couple.yourName} />
+                Made with ❤ from <EditableText section="couple" field="yourName" value={couple.yourName} />
             </p>
             <p>© {new Date().getFullYear()} Be My Love</p>
         </footer>

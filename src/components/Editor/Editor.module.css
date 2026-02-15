@@ -145,13 +145,52 @@
 /* Modern Inputs */
 .modernGroup {
     margin-bottom: 2rem;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modernGroup summary {
+    padding: 1rem;
+    background: #fafafa;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--hot-pink);
+    list-style: none;
+    /* Hide default marker */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.modernGroup summary::-webkit-details-marker {
+    display: none;
+}
+
+.modernGroup summary::after {
+    content: '+';
+    font-size: 1.2rem;
+    color: #999;
+}
+
+.modernGroup[open] summary::after {
+    content: '-';
+}
+
+.modernGroup summary:hover {
+    background: #f0f0f0;
+}
+
+.accordionContent {
+    padding: 1.5rem;
+    background: white;
+    border-top: 1px solid #eee;
 }
 
 .modernGroup h4 {
-    margin: 0 0 1rem 0;
-    color: var(--hot-pink);
-    font-size: 1.1rem;
-    font-weight: 700;
+    margin: 0;
+    /* Remove old margin since summary handles it */
 }
 
 .inputRow {
@@ -261,6 +300,58 @@
     background: white;
     border-top: 1px solid #f0f0f0;
     text-align: center;
+}
+
+/* Editor Controls */
+.controlRow {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.controlBtn {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.controlBtn:hover {
+    background: #f0f0f0;
+    border-color: #bbb;
+}
+
+.controlBtn.danger {
+    color: #e63946;
+    border-color: #ffccd0;
+}
+
+.controlBtn.danger:hover {
+    background: #ffe6e8;
+}
+
+.addBtn {
+    width: 100%;
+    padding: 0.8rem;
+    background: #f0f9ff;
+    border: 1px dashed #0ea5e9;
+    color: #0284c7;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.addBtn:hover {
+    background: #e0f2fe;
 }
 
 .shareHint {

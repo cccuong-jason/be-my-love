@@ -61,6 +61,30 @@
     letter-spacing: 0.5px;
 }
 
+/* Question Image */
+.questionImageContainer {
+    width: 100%;
+    height: 250px;
+    margin-bottom: 2rem;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fdf2f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.questionImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.questionImage:hover {
+    transform: scale(1.05);
+}
+
 /* Question */
 .questionText {
     color: #1f2937;
@@ -217,4 +241,28 @@
         min-height: 3.5rem;
         /* Better touch target */
     }
+}
+
+.toast {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) !important;
+    /* Framer motion might overwrite transform, need to be careful. 
+       Actually better to use 'left: 0; right: 0; margin: auto;' or flex centering in parent.
+       But parent is relative. Let's use left/right/margin.
+    */
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--hot-pink);
+    color: var(--hot-pink);
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+    z-index: 10;
+    pointer-events: none;
+    text-align: center;
+    width: max-content;
+    max-width: 90%;
 }
