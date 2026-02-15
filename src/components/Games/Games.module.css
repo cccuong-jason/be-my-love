@@ -266,3 +266,81 @@
     width: max-content;
     max-width: 90%;
 }
+
+/* ===== Kitty Reaction Styles ===== */
+
+.kittyContainer {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.kittyWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kittyImage {
+    mix-blend-mode: multiply;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(255, 105, 180, 0.25));
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Floating hearts on correct answer */
+.floatingHeartsContainer {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 6;
+}
+
+.floatingHeart {
+    position: absolute;
+    font-size: 1rem;
+    display: inline-block;
+}
+
+/* Kitty parade on win screen */
+.kittyParade {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    margin: 1.5rem 0 0.5rem;
+}
+
+.paradeKitty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .kittyContainer {
+        bottom: 8px;
+        right: 8px;
+    }
+
+    .kittyContainer .kittyImage {
+        width: 56px !important;
+        height: 56px !important;
+    }
+
+    .kittyParade {
+        gap: 0.6rem;
+    }
+
+    .paradeKitty .kittyImage {
+        width: 64px !important;
+        height: 64px !important;
+    }
+}

@@ -39,9 +39,10 @@ export interface ContentState {
     music: {
         url: string;
     };
+    slug?: string;
     isEditorOpen: boolean;
     toggleEditor: () => void;
-    updateSection: (section: keyof Omit<ContentState, 'isEditorOpen' | 'toggleEditor' | 'updateSection' | 'setFullState'>, data: any) => void;
+    updateSection: (section: keyof Omit<ContentState, 'isEditorOpen' | 'toggleEditor' | 'updateSection' | 'setFullState' | 'slug'>, data: any) => void;
     setFullState: (state: any) => void;
 }
 

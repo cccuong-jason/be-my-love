@@ -17,7 +17,7 @@ export default function Interactive() {
         const x = Math.random() * 200 - 100; // -100 to 100
         const y = Math.random() * 200 - 100;
         setNoPosition({ x, y });
-        setYesSize(prev => Math.min(prev + 0.2, 3)); // Cap size growth
+        // setYesSize(prev => Math.min(prev + 0.2, 3)); // Removed per user request
 
         // Cycle through "No" texts
         setNoTextIndex((prev) => (prev + 1) % interactive.noTexts.length);

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useContentStore } from '@/store/contentStore';
 import { deserializeContent, updateUrl } from '@/utils/serialization';
 import EditorUI from './EditorUI';
@@ -18,18 +18,20 @@ export default function EditorProvider({ children }: { children: React.ReactNode
         }
     }, [setFullState]);
 
-    // Update URL on change
-    useEffect(() => {
-        const unsubscribe = useContentStore.subscribe((state) => {
-            updateUrl(state);
-        });
-        return () => unsubscribe();
-    }, []);
+    // Update URL on change - DISABLED to remove base64 hash from URL
+    // useEffect(() => {
+    //     const unsubscribe = useContentStore.subscribe((state) => {
+    //         updateUrl(state);
+    //     });
+    //     return () => unsubscribe();
+    // }, []);
 
     return (
         <>
             {children}
-            <EditorUI />
+            <Suspense fallback={null}>
+                <EditorUI />
+            </Suspense>
         </>
     );
 }

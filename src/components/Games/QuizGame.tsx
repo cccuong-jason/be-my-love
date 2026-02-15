@@ -4,6 +4,7 @@ import { useContentStore } from '@/store/contentStore';
 import confetti from 'canvas-confetti';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './Games.module.css';
+import KittyReaction, { KittyParade, type KittyMood } from './KittyReaction';
 
 export default function QuizGame() {
     const quiz = useContentStore((state) => state.quiz);
@@ -12,6 +13,7 @@ export default function QuizGame() {
     const [finished, setFinished] = useState(false);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [isWrong, setIsWrong] = useState(false);
+    const [kittyMood, setKittyMood] = useState<KittyMood>('idle');
 
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
@@ -22,6 +24,7 @@ export default function QuizGame() {
 
         if (index === currentQuestion.answer) {
             // Correct
+            setKittyMood('correct');
             const message = currentQuestion.celebration || "Correct! 🎉";
             setToastMessage(message);
             setShowToast(true);
@@ -32,18 +35,22 @@ export default function QuizGame() {
                 if (currentQ < quiz.questions.length - 1) {
                     setCurrentQ(currentQ + 1);
                     setSelectedOption(null);
+                    setKittyMood('idle');
                 } else {
                     setScore(score + 1);
                     setFinished(true);
+                    setKittyMood('celebrate');
                     triggerWin();
                 }
             }, 2000); // 2 seconds to read the cute message
         } else {
             // Wrong
             setIsWrong(true);
+            setKittyMood('wrong');
             setTimeout(() => {
                 setIsWrong(false);
                 setSelectedOption(null);
+                setKittyMood('idle');
             }, 800);
         }
     };
@@ -81,6 +88,7 @@ export default function QuizGame() {
         setScore(0);
         setFinished(false);
         setSelectedOption(null);
+        setKittyMood('idle');
     };
 
     if (finished) {
@@ -93,6 +101,7 @@ export default function QuizGame() {
                     className={styles.winCard}
                 >
                     <h3>❤️ Perfect Score! ❤️</h3>
+                    <KittyParade />
                     <p>{quiz.celebrationText || "You know us properly!"}</p>
                     <button onClick={restart} className={styles.resetBtn}>Play Again</button>
                 </motion.div>
@@ -138,6 +147,8 @@ export default function QuizGame() {
                         </button>
                     ))}
                 </div>
+
+                <KittyReaction mood={kittyMood} />
 
                 <AnimatePresence>
                     {showToast && (

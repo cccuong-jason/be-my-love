@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import styles from './Letters.module.css';
 
 import { useContentStore } from '@/store/contentStore';
+import { Heart } from 'lucide-react';
 
 export default function Letters() {
     const letters = useContentStore((state) => state.letters);
@@ -42,7 +43,9 @@ export default function Letters() {
                                 <h3>{letter.title}</h3>
                                 <p>{letter.content}</p>
                             </div>
-                            <div className={styles.seal}>❤</div>
+                            <div className={styles.seal}>
+                                <Heart fill="#d00000" stroke="#800000" size={16} />
+                            </div>
                             <div className={styles.frontLabel}>{letter.title}</div>
                         </div>
                     </div>

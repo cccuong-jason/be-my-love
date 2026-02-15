@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import { useContentStore } from '@/store/contentStore';
+import { Play, Pause } from 'lucide-react';
 
 export default function MusicPlayer() {
     const music = useContentStore((state) => state.music);
@@ -116,12 +117,11 @@ export default function MusicPlayer() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '1.5rem',
                         boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
                     }}
                     title={isPlaying ? "Pause Music" : "Play Music"}
                 >
-                    {isPlaying ? '⏸' : '▶'}
+                    {isPlaying ? <Pause size={24} /> : <Play size={24} />}
                 </button>
             )}
         </>
