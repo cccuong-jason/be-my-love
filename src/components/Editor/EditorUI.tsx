@@ -1,8 +1,11 @@
-"use client";
 import { useState, useEffect } from 'react';
 import { useContentStore } from '@/store/contentStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './Editor.module.css';
+import { Wand2, X, ChevronDown, Check, Save, Share2, Copy, ExternalLink } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import ToastContainer, { ToastMessage, ToastType } from '../UI/Toast';
+import Loading from '../UI/Loading';
 
 // Smooth Accordion Component
 const AccordionItem = ({ title, children, defaultOpen = false }: { title: string, children: React.ReactNode, defaultOpen?: boolean }) => {
@@ -30,7 +33,7 @@ const AccordionItem = ({ title, children, defaultOpen = false }: { title: string
                     transition={{ duration: 0.2 }}
                     style={{ fontSize: '1.2rem', color: '#999', display: 'block' }}
                 >
-                    ▼
+                    <ChevronDown size={20} />
                 </motion.span>
             </div>
             <AnimatePresence initial={false}>
@@ -63,6 +66,22 @@ export default function EditorUI() {
     const couple = useContentStore((state) => state.couple);
     const timeline = useContentStore((state) => state.timeline);
     const quiz = useContentStore((state) => state.quiz);
+    const letters = useContentStore((state) => state.letters);
+    const musicUrl = useContentStore((state) => state.music.url);
+
+    // UI Feedback State
+    const [toasts, setToasts] = useState<ToastMessage[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState("Just a moment...");
+
+    const addToast = (message: string, type: ToastType = 'info') => {
+        const id = crypto.randomUUID();
+        setToasts(prev => [...prev, { id, message, type }]);
+    };
+
+    const removeToast = (id: string) => {
+        setToasts(prev => prev.filter(t => t.id !== id));
+    };
 
     // Effectiveness check: Ensure all items have IDs for animation
     useEffect(() => {
@@ -80,51 +99,139 @@ export default function EditorUI() {
         }
     }, [timeline.events, updateSection]);
 
-    // Public Mode Check
-    const [searchParams] = useState(() => typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams());
-    const isPublic = searchParams.get('public') === 'true';
+    // Public Mode Check - use pathname only for initial render to avoid hydration mismatch
+    const pathname = usePathname();
+    const [isPublic, setIsPublic] = useState(false);
 
-    // Custom Slug State
-    const [customSlug, setCustomSlug] = useState("");
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        setIsPublic(params.get('public') === 'true');
+    }, [pathname]);
 
-    // Handler for sharing
-    const handleShare = () => {
-        const url = new URL(window.location.href);
-        url.searchParams.set('public', 'true');
+    // Custom Slug State - Initialize from store if available
+    const storedSlug = useContentStore((state) => state.slug);
+    const [customSlug, setCustomSlug] = useState(storedSlug || "");
 
-        if (customSlug.trim()) {
-            const slug = customSlug.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
-            url.searchParams.set('to', slug);
+    // Update local state when store changes (hydration)
+    useEffect(() => {
+        if (storedSlug) setCustomSlug(storedSlug);
+    }, [storedSlug]);
+
+    // Handler for saving
+    const handleSave = async () => {
+        setIsLoading(true);
+        setLoadingMessage("Saving your love story...");
+
+        let targetSlug = customSlug.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
+        if (!targetSlug) {
+            targetSlug = crypto.randomUUID().slice(0, 8);
         }
+        setCustomSlug(targetSlug);
 
-        window.open(url.toString(), '_blank');
+        const state = useContentStore.getState();
+        const exportData = {
+            hero: state.hero,
+            couple: state.couple,
+            timeline: state.timeline,
+            quiz: state.quiz,
+            letters: state.letters,
+            interactive: state.interactive,
+            music: state.music,
+        };
+
+        try {
+            const res = await fetch('/api/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slug: targetSlug, data: exportData })
+            });
+
+            if (res.ok) {
+                await res.json();
+                addToast("Journey saved successfully!", 'success');
+            } else {
+                const err = await res.json();
+                const errMsg = err.error || "Unknown error";
+                addToast("Failed to save: " + errMsg, 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            addToast("Error saving journey.", 'error');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleFileUpload = (e: any, onComplete: (val: string) => void) => {
+    const [journeyUrl, setJourneyUrl] = useState('');
+    useEffect(() => {
+        setJourneyUrl(`${window.location.origin}/journey/${customSlug || 'your-link-name'}?public=true`);
+    }, [customSlug]);
+
+    const copyLink = () => {
+        if (!customSlug) {
+            addToast("Please save your journey first or enter a custom link name.", 'info');
+            return;
+        }
+        navigator.clipboard.writeText(`${window.location.origin}/journey/${customSlug}?public=true`);
+        addToast("Link copied to clipboard!", 'success');
+    };
+
+    const handleFileUpload = async (section: string, e: any, onComplete: (val: string) => void) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            if (reader.result && typeof reader.result === 'string') {
-                onComplete(reader.result);
-            }
-        };
-        reader.readAsDataURL(file);
+        setIsLoading(true);
+        setLoadingMessage("Uploading image...");
+
+        // Create form data
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('section', section);
+
+        // Use custom slug or random one for bucket association
+        const slug = customSlug.trim() || 'draft';
+        formData.append('slug', slug);
+
+        try {
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!res.ok) throw new Error("Upload failed");
+
+            const data = await res.json();
+            onComplete(data.url);
+            addToast("Image uploaded successfully!", 'success');
+        } catch (error) {
+            console.error("Error uploading", error);
+            addToast("Failed to upload image. Please try again.", 'error');
+        } finally {
+            setIsLoading(false);
+            // Clear input so same file can be selected again if needed
+            e.target.value = '';
+        }
     };
 
     if (isPublic) return null;
 
     return (
         <>
+            <Loading isLoading={isLoading} message={loadingMessage} />
+            <ToastContainer toasts={toasts} removeToast={removeToast} />
+
             <button className={styles.fab} onClick={toggleEditor} title="Customize Content">
-                <span style={{ fontSize: '1.5rem' }}>✨</span>
+                <Wand2 size={24} />
             </button>
 
-            <div className={`${styles.drawer} ${isEditorOpen ? styles.open : ''}`}>
+            <div className={`${styles.drawer} ${isEditorOpen ? styles.open : ''} `}>
                 <div className={styles.drawerHeader}>
-                    <h3>✨ Design Your Love</h3>
-                    <button onClick={toggleEditor} className={styles.closeBtn}>×</button>
+                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <Wand2 size={20} /> Design Your Love
+                    </h3>
+                    <button onClick={toggleEditor} className={styles.closeBtn}>
+                        <X size={24} />
+                    </button>
                 </div>
 
                 <div className={styles.accordion}>
@@ -220,7 +327,7 @@ export default function EditorUI() {
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M19 12l-7 7-7-7" /></svg>
                                         </button>
                                         <button
-                                            className={`${styles.controlBtn} ${styles.danger}`}
+                                            className={`${styles.controlBtn} ${styles.danger} `}
                                             onClick={() => {
                                                 if (confirm("Delete this event?")) {
                                                     const newEvts = timeline.events.filter((_: any, idx: number) => idx !== i);
@@ -273,7 +380,7 @@ export default function EditorUI() {
                                             <input
                                                 type="file"
                                                 hidden
-                                                onChange={(e) => handleFileUpload(e, (val) => {
+                                                onChange={(e) => handleFileUpload('timeline', e, (val) => {
                                                     const newEvts = [...timeline.events];
                                                     newEvts[i].image = val;
                                                     updateSection('timeline', { events: newEvts });
@@ -318,7 +425,7 @@ export default function EditorUI() {
                                     <span className={styles.cardIndex}>Q{i + 1}</span>
                                     <div style={{ flex: 1 }}></div>
                                     <button
-                                        className={`${styles.controlBtn} ${styles.danger}`}
+                                        className={`${styles.controlBtn} ${styles.danger} `}
                                         onClick={() => {
                                             if (confirm("Delete this question?")) {
                                                 const newQs = quiz.questions.filter((_: any, idx: number) => idx !== i);
@@ -348,7 +455,7 @@ export default function EditorUI() {
                                         <div key={optIdx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
                                             <input
                                                 type="radio"
-                                                name={`q-${i}-ans`}
+                                                name={`q - ${i} -ans`}
                                                 checked={q.answer === optIdx}
                                                 onChange={() => {
                                                     const newQs = [...quiz.questions];
@@ -359,7 +466,7 @@ export default function EditorUI() {
                                             <input
                                                 className={styles.cleanInput}
                                                 value={opt}
-                                                placeholder={`Option ${optIdx + 1}`}
+                                                placeholder={`Option ${optIdx + 1} `}
                                                 style={{ marginBottom: 0 }}
                                                 onChange={(e) => {
                                                     const newQs = [...quiz.questions];
@@ -392,14 +499,14 @@ export default function EditorUI() {
                                         <input
                                             type="file"
                                             hidden
-                                            onChange={(e) => handleFileUpload(e, (val) => {
+                                            onChange={(e) => handleFileUpload('quiz', e, (val) => {
                                                 const newQs = [...quiz.questions];
                                                 newQs[i].image = val;
                                                 updateSection('quiz', { questions: newQs });
                                             })}
                                         />
                                     </label>
-                                    {q.image && <span style={{ fontSize: '0.8rem', color: 'var(--hot-pink)' }}>Image Set ✓</span>}
+                                    {q.image && <span style={{ fontSize: '0.8rem', color: 'var(--hot-pink)', display: 'flex', alignItems: 'center', gap: '4px' }}>Image Set <Check size={14} /></span>}
                                 </div>
                             </div>
                         ))}
@@ -421,33 +528,173 @@ export default function EditorUI() {
                         </button>
                     </AccordionItem>
 
+                    <AccordionItem title="Love Notes">
+                        <div className={styles.floatingInput}>
+                            <input
+                                placeholder=" "
+                                value={letters.title}
+                                onChange={(e) => updateSection('letters', { title: e.target.value })}
+                            />
+                            <label>Section Title</label>
+                        </div>
+
+                        <AnimatePresence mode='popLayout'>
+                            {letters.items.map((letter: any, i: number) => (
+                                <motion.div
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    transition={{ duration: 0.2 }}
+                                    key={letter.id}
+                                    className={styles.cardEdit}
+                                >
+                                    <div className={styles.controlRow}>
+                                        <span className={styles.cardIndex}>#{i + 1}</span>
+                                        <div style={{ flex: 1 }}></div>
+                                        <button
+                                            className={styles.controlBtn}
+                                            onClick={() => {
+                                                if (i === 0) return;
+                                                const newItems = [...letters.items];
+                                                [newItems[i - 1], newItems[i]] = [newItems[i], newItems[i - 1]];
+                                                updateSection('letters', { items: newItems });
+                                            }}
+                                            disabled={i === 0}
+                                            title="Move Up"
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+                                        </button>
+                                        <button
+                                            className={styles.controlBtn}
+                                            onClick={() => {
+                                                if (i === letters.items.length - 1) return;
+                                                const newItems = [...letters.items];
+                                                [newItems[i + 1], newItems[i]] = [newItems[i], newItems[i + 1]];
+                                                updateSection('letters', { items: newItems });
+                                            }}
+                                            disabled={i === letters.items.length - 1}
+                                            title="Move Down"
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M19 12l-7 7-7-7" /></svg>
+                                        </button>
+                                        <button
+                                            className={`${styles.controlBtn} ${styles.danger}`}
+                                            onClick={() => {
+                                                if (confirm("Delete this love note?")) {
+                                                    const newItems = letters.items.filter((_: any, idx: number) => idx !== i);
+                                                    updateSection('letters', { items: newItems });
+                                                }
+                                            }}
+                                            title="Delete Note"
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" /></svg>
+                                        </button>
+                                    </div>
+
+                                    <input
+                                        className={styles.cleanInput}
+                                        value={letter.title}
+                                        placeholder="Note Title (e.g. Open When You're Happy)"
+                                        onChange={(e) => {
+                                            const newItems = [...letters.items];
+                                            newItems[i] = { ...newItems[i], title: e.target.value };
+                                            updateSection('letters', { items: newItems });
+                                        }}
+                                    />
+
+                                    <textarea
+                                        className={styles.cleanInput}
+                                        value={letter.content}
+                                        placeholder="Write your heartfelt message..."
+                                        rows={3}
+                                        style={{ marginTop: '0.5rem', resize: 'vertical', minHeight: '80px' }}
+                                        onChange={(e) => {
+                                            const newItems = [...letters.items];
+                                            newItems[i] = { ...newItems[i], content: e.target.value };
+                                            updateSection('letters', { items: newItems });
+                                        }}
+                                    />
+
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
+                                        <label style={{ fontSize: '0.85rem', color: '#666' }}>Envelope Color</label>
+                                        <input
+                                            type="color"
+                                            value={letter.color}
+                                            onChange={(e) => {
+                                                const newItems = [...letters.items];
+                                                newItems[i] = { ...newItems[i], color: e.target.value };
+                                                updateSection('letters', { items: newItems });
+                                            }}
+                                            style={{ width: '36px', height: '36px', border: 'none', borderRadius: '8px', cursor: 'pointer', padding: 0 }}
+                                        />
+                                        <span style={{ fontSize: '0.8rem', color: '#999' }}>{letter.color}</span>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+
+                        <button
+                            className={styles.addBtn}
+                            onClick={() => {
+                                const maxId = letters.items.reduce((max: number, item: any) => Math.max(max, item.id), 0);
+                                const newItems = [...letters.items, {
+                                    id: maxId + 1,
+                                    title: "Open When...",
+                                    content: "",
+                                    color: "#ffe4e1"
+                                }];
+                                updateSection('letters', { items: newItems });
+                            }}
+                        >
+                            + Add Love Note
+                        </button>
+                    </AccordionItem>
+
                     <AccordionItem title="Background Music">
                         <div className={styles.floatingInput}>
                             <input
                                 placeholder=" "
-                                value={useContentStore((state) => state.music.url)}
+                                value={musicUrl}
                                 onChange={(e) => updateSection('music', { url: e.target.value })}
                             />
                             <label>YouTube Link</label>
                         </div>
                     </AccordionItem>
 
-                    <AccordionItem title="Sharing">
+                    <AccordionItem title="Sharing & Publishing">
                         <div className={styles.floatingInput}>
                             <input
                                 placeholder=" "
                                 value={customSlug}
                                 onChange={(e) => setCustomSlug(e.target.value)}
                             />
-                            <label>Custom Link Name (optional)</label>
+                            <label>Custom Link Name (e.g., jack-loves-rose)</label>
+                        </div>
+
+                        <div style={{ marginTop: '1rem', padding: '1rem', background: '#f0f0f0', borderRadius: '8px' }}>
+                            <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.5rem' }}>Your Public Link:</p>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <input
+                                    readOnly
+                                    value={journeyUrl}
+                                    style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc', background: '#fff' }}
+                                />
+                                <button onClick={copyLink} title="Copy Link" style={{ padding: '8px', cursor: 'pointer', background: '#fff', border: '1px solid #ccc', borderRadius: '4px' }}>
+                                    <Copy size={18} />
+                                </button>
+                                <a href={journeyUrl} target="_blank" rel="noopener noreferrer" title="Open in New Tab" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', background: '#fff', border: '1px solid #ccc', borderRadius: '4px', color: 'inherit' }}>
+                                    <ExternalLink size={18} />
+                                </a>
+                            </div>
                         </div>
                     </AccordionItem>
 
                 </div>
 
                 <div className={styles.footerAction}>
-                    <button className={styles.shareBtn} onClick={handleShare}>
-                        🚀 Publish & Share
+                    <button className={styles.shareBtn} onClick={handleSave}>
+                        <Save size={18} /> Save Changes
                     </button>
                     <p className={styles.shareHint}>Opens your personalized love page in a new tab.</p>
                 </div>

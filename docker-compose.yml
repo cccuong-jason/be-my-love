@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: be-my-love-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+        CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
+        AWS_S3_ACCESS_KEY: ${AWS_S3_ACCESS_KEY}
+        AWS_S3_SECRET_KEY: ${AWS_S3_SECRET_KEY}
+        AWS_S3_REGION: ${AWS_S3_REGION}
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/be-my-love
+      # Pass through AWS credentials from .env
+      - AWS_S3_ACCESS_KEY=${AWS_S3_ACCESS_KEY}
+      - AWS_S3_SECRET_KEY=${AWS_S3_SECRET_KEY}
+      - AWS_S3_REGION=${AWS_S3_REGION}
+      - AWS_S3_ENDPOINT=${AWS_S3_ENDPOINT:-https://s3.cloudfly.vn}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-be-my-love-assets}
+      - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      - CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
+
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+    container_name: be-my-love-mongo
+    image: mongo:6
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

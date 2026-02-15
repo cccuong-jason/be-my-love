@@ -1,0 +1,92 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, #fff0f3 0%, #ffe3e3 100%);
+    font-family: var(--font-open-sans), sans-serif;
+    color: #4a4a4a;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.title {
+    font-family: var(--font-great-vibes), cursive;
+    font-size: 5rem;
+    color: #ff4d4d;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    color: #666;
+    max-width: 600px;
+}
+
+.ctaButton {
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background: #ff4d4d;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.4);
+}
+
+.ctaButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 77, 77, 0.6);
+}
+
+.ctaButtonWrapper {
+    display: inline-block;
+}
+
+.features {
+    display: flex;
+    gap: 2rem;
+    padding: 4rem 2rem;
+    max-width: 1000px;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.featureCard {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    flex: 1;
+    min-width: 250px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.featureIcon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.featureTitle {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #333;
+}

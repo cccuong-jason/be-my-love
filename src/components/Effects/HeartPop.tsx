@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Heart } from 'lucide-react';
 
 interface Pop {
     id: number;
@@ -45,7 +46,7 @@ export default function HeartPop() {
                             transform: 'translate(-50%, -50%)'
                         }}
                     >
-                        ❤
+                        <Heart fill="#FF69B4" stroke="#FF69B4" />
                     </motion.div>
                 ))}
             </AnimatePresence>
