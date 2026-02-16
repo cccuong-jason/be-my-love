@@ -6,6 +6,8 @@ import { Heart } from 'lucide-react';
 
 export default function NewJourneyPage() {
     const [title, setTitle] = useState("");
+    const [yourName, setYourName] = useState("");
+    const [partnerName, setPartnerName] = useState("");
     const [slug, setSlug] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
@@ -31,6 +33,10 @@ export default function NewJourneyPage() {
                 hero: {
                     ...defaultContent.hero,
                     title: title || defaultContent.hero.title,
+                },
+                couple: {
+                    yourName: yourName || defaultContent.couple.yourName,
+                    partnerName: partnerName || defaultContent.couple.partnerName,
                 }
             };
 
@@ -100,6 +106,45 @@ export default function NewJourneyPage() {
                                 fontSize: '1rem'
                             }}
                         />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#555' }}>
+                                Your Name
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Me"
+                                value={yourName}
+                                onChange={(e) => setYourName(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '12px',
+                                    borderRadius: '8px',
+                                    border: '1px solid #ddd',
+                                    fontSize: '1rem'
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#555' }}>
+                                Partner's Name
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Them"
+                                value={partnerName}
+                                onChange={(e) => setPartnerName(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '12px',
+                                    borderRadius: '8px',
+                                    border: '1px solid #ddd',
+                                    fontSize: '1rem'
+                                }}
+                            />
+                        </div>
                     </div>
 
                     <div>

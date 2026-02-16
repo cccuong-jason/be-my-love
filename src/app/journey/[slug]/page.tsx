@@ -4,6 +4,7 @@ import Letters from "@/components/Letters";
 import Interactive from "@/components/Interactive";
 import QuizGame from "@/components/Games/QuizGame";
 import FloatingAssets from "@/components/FloatingAssets";
+import MusicPlayer from "@/components/MusicPlayer";
 import Footer from "@/components/Footer";
 import styles from "../../page.module.css"; // Adjust import path for css
 import { loadJourney } from "@/lib/journeyService";
@@ -28,6 +29,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ slug: 
         <main className={styles.main}>
             <StoreHydrator data={initialData} slug={slug} />
             <FloatingAssets />
+            <MusicPlayer />
             <Hero />
             <Journey />
             <Letters />

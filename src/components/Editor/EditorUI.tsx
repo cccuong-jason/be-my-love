@@ -214,6 +214,9 @@ export default function EditorUI() {
         }
     };
 
+    // Only show on journey pages
+    if (!pathname.startsWith('/journey/')) return null;
+
     if (isPublic) return null;
 
     return (
