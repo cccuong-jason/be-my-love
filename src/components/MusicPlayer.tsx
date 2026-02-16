@@ -46,7 +46,7 @@ export default function MusicPlayer() {
                 width: '0',
                 videoId: videoId,
                 playerVars: {
-                    'autoplay': 0, // Starts paused, user must toggle
+                    'autoplay': 1, // Attempt autoplay
                     'controls': 0,
                     'loop': 1,
                     'playlist': videoId // Required for loop
@@ -99,31 +99,29 @@ export default function MusicPlayer() {
     return (
         <>
             <div id="youtube-player" style={{ position: 'absolute', top: -9999, left: -9999 }}></div>
-            {!isPublic && (
-                <button
-                    onClick={togglePlay}
-                    style={{
-                        position: 'fixed',
-                        bottom: '30px',
-                        left: '30px',
-                        width: '50px',
-                        height: '50px',
-                        borderRadius: '50%',
-                        background: 'rgba(255,255,255,0.8)',
-                        border: '2px solid var(--hot-pink)',
-                        color: 'var(--hot-pink)',
-                        zIndex: 1000,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
-                    }}
-                    title={isPlaying ? "Pause Music" : "Play Music"}
-                >
-                    {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-                </button>
-            )}
+            <button
+                onClick={togglePlay}
+                style={{
+                    position: 'fixed',
+                    bottom: '30px',
+                    left: '30px',
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.8)',
+                    border: '2px solid var(--hot-pink)',
+                    color: 'var(--hot-pink)',
+                    zIndex: 1000,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
+                }}
+                title={isPlaying ? "Pause Music" : "Play Music"}
+            >
+                {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+            </button>
         </>
     );
 }
