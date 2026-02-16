@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { useContentStore } from '@/store/contentStore';
 import EditableText from './Editor/EditableText';
 import styles from './Interactive.module.css';
+import ParallaxSection from './ParallaxSection';
 
 export default function Interactive() {
     const interactive = useContentStore((state) => state.interactive);
@@ -46,7 +47,7 @@ export default function Interactive() {
     };
 
     return (
-        <section className={styles.interactive}>
+        <ParallaxSection className={styles.interactive} parallaxDistance={60}>
             {!accepted ? (
                 <div className={styles.container}>
                     <h2>
@@ -81,6 +82,6 @@ export default function Interactive() {
                     </p>
                 </div>
             )}
-        </section>
+        </ParallaxSection>
     );
 }

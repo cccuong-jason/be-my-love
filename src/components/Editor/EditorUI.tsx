@@ -69,6 +69,7 @@ export default function EditorUI() {
     const letters = useContentStore((state) => state.letters);
     const interactive = useContentStore((state) => state.interactive);
     const musicUrl = useContentStore((state) => state.music.url);
+    const gallery = useContentStore((state) => state.gallery);
 
     // UI Feedback State
     const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -136,6 +137,7 @@ export default function EditorUI() {
             timeline: state.timeline,
             quiz: state.quiz,
             letters: state.letters,
+            gallery: state.gallery,
             interactive: state.interactive,
             music: state.music,
         };
@@ -392,6 +394,37 @@ export default function EditorUI() {
                                             />
                                         </label>
                                     </div>
+                                    {evt.image && (
+                                        <div style={{ position: 'relative', marginTop: '0.5rem', width: '100%', maxWidth: '200px', height: '150px', border: '1px solid #eee', borderRadius: '8px', overflow: 'hidden' }}>
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={evt.image} alt="Event" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <button
+                                                onClick={async () => {
+                                                    if (confirm("Remove image?")) {
+                                                        const newEvts = [...timeline.events];
+                                                        const url = newEvts[i].image;
+                                                        newEvts[i].image = "";
+                                                        updateSection('timeline', { events: newEvts });
+
+                                                        if (url) {
+                                                            try {
+                                                                await fetch('/api/delete', {
+                                                                    method: 'POST',
+                                                                    headers: { 'Content-Type': 'application/json' },
+                                                                    body: JSON.stringify({ url })
+                                                                });
+                                                                addToast("Image removed from storage", 'success');
+                                                            } catch (e) { console.error("Delete failed", e); }
+                                                        }
+                                                    }
+                                                }}
+                                                style={{ position: 'absolute', top: 5, right: 5, background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                                                title="Remove Image"
+                                            >
+                                                <X size={16} color="#ff4d4d" />
+                                            </button>
+                                        </div>
+                                    )}
                                 </motion.div>
                             ))}
                         </AnimatePresence>
@@ -413,124 +446,7 @@ export default function EditorUI() {
                         </button>
                     </AccordionItem>
 
-                    <AccordionItem title="Quiz Settings" defaultOpen>
-                        <div className={styles.floatingInput}>
-                            <input
-                                placeholder=" "
-                                value={quiz.title}
-                                onChange={(e) => updateSection('quiz', { title: e.target.value })}
-                            />
-                            <label>Quiz Title</label>
-                        </div>
 
-                        {quiz.questions.map((q: any, i: number) => (
-                            <div key={i} className={styles.cardEdit}>
-                                <div className={styles.controlRow}>
-                                    <span className={styles.cardIndex}>Q{i + 1}</span>
-                                    <div style={{ flex: 1 }}></div>
-                                    <button
-                                        className={`${styles.controlBtn} ${styles.danger} `}
-                                        onClick={() => {
-                                            if (confirm("Delete this question?")) {
-                                                const newQs = quiz.questions.filter((_: any, idx: number) => idx !== i);
-                                                updateSection('quiz', { questions: newQs });
-                                            }
-                                        }}
-                                        title="Delete Question"
-                                    >
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" /></svg>
-                                    </button>
-                                </div>
-
-                                <input
-                                    className={styles.cleanInput}
-                                    value={q.question}
-                                    placeholder="Question Text"
-                                    onChange={(e) => {
-                                        const newQs = [...quiz.questions];
-                                        newQs[i].question = e.target.value;
-                                        updateSection('quiz', { questions: newQs });
-                                    }}
-                                />
-
-                                <div style={{ margin: '1rem 0' }}>
-                                    <label style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', display: 'block' }}>Options (Select Correct Answer)</label>
-                                    {q.options.map((opt: string, optIdx: number) => (
-                                        <div key={optIdx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
-                                            <input
-                                                type="radio"
-                                                name={`q - ${i} -ans`}
-                                                checked={q.answer === optIdx}
-                                                onChange={() => {
-                                                    const newQs = [...quiz.questions];
-                                                    newQs[i].answer = optIdx;
-                                                    updateSection('quiz', { questions: newQs });
-                                                }}
-                                            />
-                                            <input
-                                                className={styles.cleanInput}
-                                                value={opt}
-                                                placeholder={`Option ${optIdx + 1} `}
-                                                style={{ marginBottom: 0 }}
-                                                onChange={(e) => {
-                                                    const newQs = [...quiz.questions];
-                                                    newQs[i].options[optIdx] = e.target.value;
-                                                    updateSection('quiz', { questions: newQs });
-                                                }}
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className={styles.inputRow}>
-                                    <div className={styles.floatingInput}>
-                                        <input
-                                            placeholder=" "
-                                            value={q.celebration || ""}
-                                            onChange={(e) => {
-                                                const newQs = [...quiz.questions];
-                                                newQs[i].celebration = e.target.value;
-                                                updateSection('quiz', { questions: newQs });
-                                            }}
-                                        />
-                                        <label>Success Message (Toast)</label>
-                                    </div>
-                                </div>
-
-                                <div className={styles.dateAndImg}>
-                                    <label className={styles.uploadBtn}>
-                                        {q.image ? "Change Image" : "Upload Image"}
-                                        <input
-                                            type="file"
-                                            hidden
-                                            onChange={(e) => handleFileUpload('quiz', e, (val) => {
-                                                const newQs = [...quiz.questions];
-                                                newQs[i].image = val;
-                                                updateSection('quiz', { questions: newQs });
-                                            })}
-                                        />
-                                    </label>
-                                    {q.image && <span style={{ fontSize: '0.8rem', color: 'var(--hot-pink)', display: 'flex', alignItems: 'center', gap: '4px' }}>Image Set <Check size={14} /></span>}
-                                </div>
-                            </div>
-                        ))}
-
-                        <button
-                            className={styles.addBtn}
-                            onClick={() => {
-                                const newQs = [...quiz.questions, {
-                                    question: "New Question?",
-                                    options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-                                    answer: 0,
-                                    celebration: "Correct!",
-                                    image: ""
-                                }];
-                                updateSection('quiz', { questions: newQs });
-                            }}
-                        >
-                            + Add Question
-                        </button>
-                    </AccordionItem>
 
                     <AccordionItem title="Love Notes">
                         <div className={styles.floatingInput}>
@@ -634,6 +550,95 @@ export default function EditorUI() {
                                         />
                                         <span style={{ fontSize: '0.8rem', color: '#999' }}>{letter.color}</span>
                                     </div>
+
+                                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px dashed #eee' }}>
+                                        <div style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.5)', borderRadius: '8px' }}>
+                                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={letter.isLocked || false}
+                                                    onChange={(e) => {
+                                                        const newLetters = [...letters.items];
+                                                        newLetters[i].isLocked = e.target.checked;
+                                                        updateSection('letters', { items: newLetters });
+                                                    }}
+                                                />
+                                                Add Lock & Quiz
+                                            </label>
+
+                                            {letter.isLocked && (
+                                                <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                                    <input
+                                                        className={styles.cleanInput}
+                                                        placeholder="Question (e.g. Where did we meet?)"
+                                                        value={letter.lockQuestion || ""}
+                                                        onChange={(e) => {
+                                                            const newLetters = [...letters.items];
+                                                            newLetters[i].lockQuestion = e.target.value;
+                                                            updateSection('letters', { items: newLetters });
+                                                        }}
+                                                    />
+                                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
+                                                        {[0, 1, 2, 3].map((optIdx) => (
+                                                            <div key={optIdx} style={{ display: 'flex', alignItems: 'center' }}>
+                                                                <input
+                                                                    type="radio"
+                                                                    name={`correct-${i}`}
+                                                                    checked={letter.lockAnswer === optIdx}
+                                                                    onChange={() => {
+                                                                        const newLetters = [...letters.items];
+                                                                        newLetters[i].lockAnswer = optIdx;
+                                                                        updateSection('letters', { items: newLetters });
+                                                                    }}
+                                                                    title="Mark as correct answer"
+                                                                    style={{ marginRight: '4px' }}
+                                                                />
+                                                                <input
+                                                                    className={styles.cleanInput}
+                                                                    placeholder={`Option ${optIdx + 1}`}
+                                                                    value={letter.lockOptions?.[optIdx] || ""}
+                                                                    onChange={(e) => {
+                                                                        const newLetters = [...letters.items];
+                                                                        if (!newLetters[i].lockOptions) newLetters[i].lockOptions = ["", "", "", ""];
+                                                                        newLetters[i].lockOptions![optIdx] = e.target.value;
+                                                                        updateSection('letters', { items: newLetters });
+                                                                    }}
+                                                                    style={{ fontSize: '0.8rem' }}
+                                                                />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '2px' }}>* Select the radio button for the correct answer.</p>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div style={{ marginTop: '0.5rem' }}>
+                                            <label style={{ fontSize: '0.8rem', fontWeight: 'bold', display: 'block', marginBottom: '4px' }}>
+                                                Context Image (Revealed after unlocking)
+                                            </label>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                {letter.contextImage && (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img src={letter.contextImage} alt="Context" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+                                                )}
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => {
+                                                        if (e.target.files && e.target.files[0]) {
+                                                            handleFileUpload('letters', { target: { files: e.target.files } }, (url) => {
+                                                                const newLetters = [...letters.items];
+                                                                newLetters[i].contextImage = url;
+                                                                updateSection('letters', { items: newLetters });
+                                                            });
+                                                        }
+                                                    }}
+                                                    style={{ fontSize: '0.8rem' }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </motion.div>
                             ))}
                         </AnimatePresence>
@@ -655,6 +660,112 @@ export default function EditorUI() {
                         </button>
                     </AccordionItem>
 
+                    <AccordionItem title="Moments Gallery">
+                        <div className={styles.floatingInput}>
+                            <input
+                                placeholder=" "
+                                value={useContentStore((state) => state.gallery?.title || "Moments")}
+                                onChange={(e) => updateSection('gallery', { title: e.target.value })}
+                            />
+                            <label>Gallery Title</label>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                            {(gallery?.images || []).map((img: any, i: number) => (
+                                <div key={img.id} className={styles.cardEdit} style={{ padding: '0.5rem' }}>
+                                    <div style={{ position: 'relative', height: '100px', backgroundColor: '#eee', marginBottom: '0.5rem', borderRadius: '4px', overflow: 'hidden' }}>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={img.src} alt="thumbnail" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <button
+                                            onClick={async () => {
+                                                if (confirm("Delete photo?")) {
+                                                    const newImgs = gallery?.images.filter((_: any, idx: number) => idx !== i);
+                                                    updateSection('gallery', { images: newImgs });
+
+                                                    // Optimistic update done, now cleanup storage
+                                                    try {
+                                                        await fetch('/api/delete', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({ url: img.src })
+                                                        });
+                                                        addToast("Image removed from storage", 'success');
+                                                    } catch (e) {
+                                                        console.error("Delete failed", e);
+                                                        // We don't revert state because user wanted it gone from UI anyway
+                                                    }
+                                                }
+                                            }}
+                                            style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '50%', padding: '4px', cursor: 'pointer' }}
+                                        >
+                                            <X size={14} color="red" />
+                                        </button>
+                                    </div>
+                                    <input
+                                        className={styles.cleanInput}
+                                        value={img.caption}
+                                        placeholder="Caption..."
+                                        onChange={(e) => {
+                                            const newImgs = [...gallery.images];
+                                            newImgs[i].caption = e.target.value;
+                                            updateSection('gallery', { images: newImgs });
+                                        }}
+                                        style={{ fontSize: '0.8rem', fontWeight: 'bold' }}
+                                    />
+                                    <textarea
+                                        className={styles.cleanInput}
+                                        value={img.description || ""}
+                                        placeholder="Story behind this moment..."
+                                        rows={2}
+                                        onChange={(e) => {
+                                            const newImgs = [...gallery.images];
+                                            newImgs[i].description = e.target.value;
+                                            updateSection('gallery', { images: newImgs });
+                                        }}
+                                        style={{ fontSize: '0.8rem', marginTop: '4px', resize: 'vertical', minHeight: '40px' }}
+                                    />
+                                    <input
+                                        type="range"
+                                        min="-15" max="15"
+                                        value={img.rotation || 0}
+                                        onChange={(e) => {
+                                            const newImgs = [...gallery.images];
+                                            newImgs[i].rotation = parseInt(e.target.value);
+                                            updateSection('gallery', { images: newImgs });
+                                        }}
+                                        title="Rotation"
+                                        style={{ width: '100%' }}
+                                    />
+                                </div>
+                            ))}
+
+                            <label className={styles.addBtn} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '150px', border: '2px dashed #ffb6c1', cursor: 'pointer' }}>
+                                <span>+ Upload Photo</span>
+                                <input
+                                    type="file"
+                                    hidden
+                                    accept="image/*"
+                                    multiple
+                                    onChange={(e) => {
+                                        if (e.target.files) {
+                                            Array.from(e.target.files).forEach((file) => {
+                                                handleFileUpload('gallery', { target: { files: [file] } }, (url) => {
+                                                    const currentImgs = gallery?.images || [];
+                                                    const newImg = {
+                                                        id: crypto.randomUUID(),
+                                                        src: url,
+                                                        caption: "New Memory",
+                                                        rotation: Math.floor(Math.random() * 20) - 10
+                                                    };
+                                                    updateSection('gallery', { images: [...currentImgs, newImg] });
+                                                });
+                                            });
+                                        }
+                                    }}
+                                />
+                            </label>
+                        </div>
+                    </AccordionItem>
                     <AccordionItem title="Proposal (Interactive)">
                         <div className={styles.floatingInput}>
                             <input
@@ -776,7 +887,7 @@ export default function EditorUI() {
                     </button>
                     <p className={styles.shareHint}>Opens your personalized love page in a new tab.</p>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

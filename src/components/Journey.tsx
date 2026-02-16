@@ -1,21 +1,16 @@
 "use client";
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { useContentStore } from '@/store/contentStore';
 import styles from './Journey.module.css';
+import ParallaxSection from './ParallaxSection';
 
 export default function Journey() {
+    // Timeline data from store
     const timeline = useContentStore((state) => state.timeline);
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    // Scroll progress for the entire section
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end start"]
-    });
 
     return (
-        <section ref={containerRef} className={styles.journeySection}>
+        <ParallaxSection className={styles.journeySection} parallaxDistance={100}>
             <motion.h2
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -64,6 +59,6 @@ export default function Journey() {
                     );
                 })}
             </div>
-        </section>
+        </ParallaxSection>
     );
 }

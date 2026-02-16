@@ -1,247 +1,210 @@
-.letters {
+.lettersSection {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    perspective: 1000px;
+    padding: 4rem 2rem;
 }
 
-.letters h2 {
+.sectionTitle {
     font-size: 3rem;
     color: var(--hot-pink);
     margin-bottom: 3rem;
     text-align: center;
-    font-family: var(--font-mynerve), cursive;
+    font-family: var(--font-great-vibes), cursive;
 }
 
-.container {
+.grid {
     display: flex;
     flex-direction: row;
-    /* Horizontal Stack */
     justify-content: center;
     flex-wrap: wrap;
-    /* Wrap on small screens? Or scroll? Let's wrap but overlapping */
-    gap: 0;
+    gap: 2.5rem;
     width: 100%;
-    max-width: 1000px;
-    /* Wider container */
-    align-items: center;
-    margin-top: 4rem;
-    padding-bottom: 5rem;
-    /* Extra space for overflow content/Quiz overlap */
+    max-width: 1200px;
+    align-items: stretch;
 }
 
-/* Wrapper for positioning and perspective */
-.envelopeContainer {
-    width: 300px;
-    /* Fixed width for better stacking control */
-    height: 200px;
-    position: relative;
+/* === FLIP CARD === */
+.flipCard {
+    width: 280px;
+    height: 320px;
+    perspective: 1000px;
     cursor: pointer;
-    transition: all 0.5s ease;
-    margin-right: -100px;
-    /* Horizontal Overlap */
-    margin-bottom: 2rem;
-    /* Vertical spacing if wrapped */
 }
 
-/* Pop up on hover */
-.envelopeContainer:hover {
-    transform: translateY(-40px) rotate(0deg) !important;
-    z-index: 50 !important;
-    margin-right: 20px;
-    /* Give it space */
-}
-
-.envelopeContainer:nth-child(odd) {
-    transform: rotate(-2deg);
-}
-
-.envelopeContainer:nth-child(even) {
-    transform: rotate(2deg);
-}
-
-/* Open state: move to front and center? or just flip? */
-.envelopeContainer.open {
-    margin-bottom: 250px;
-    /* Make space for letter */
-    transform: rotate(0) scale(1.1) !important;
-    z-index: 20 !important;
-}
-
-.envelopeBody {
+.flipInner {
     position: relative;
     width: 100%;
     height: 100%;
-    background-color: var(--bg-color, #ffc0cb);
-    border-radius: 0 0 10px 10px;
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
 }
 
-/* ... flaps ... */
-.flap {
+.flipInner.flipped {
+    transform: rotateY(180deg);
+}
+
+.flipFront,
+.flipBack {
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 0;
-    border-top: 100px solid #d88fa5;
-    /* Adjusted height */
-    border-left: 150px solid transparent;
-    /* Half of 300px */
-    border-right: 150px solid transparent;
-    /* Half of 300px */
-    transform-origin: top;
-    transition: transform 0.6s ease-in-out, z-index 0.6s;
-    z-index: 5;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 16px;
+    overflow: hidden;
 }
 
-.open .flap {
-    transform: rotateX(180deg);
-    z-index: 1;
-}
-
-.pocket {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 0;
-    border-bottom: 100px solid #ffb6c1;
-    border-left: 150px solid transparent;
-    /* Half of 300px */
-    border-right: 150px solid transparent;
-    /* Half of 300px */
-    z-index: 3;
-    pointer-events: none;
-}
-
-.seal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2.5rem;
-    color: #e91e63;
-    z-index: 6;
-    transition: opacity 0.3s;
-}
-
-.open .seal {
-    opacity: 0;
-}
-
-.frontLabel {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: var(--font-mynerve), cursive;
-    font-size: 1.5rem;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-    z-index: 6;
-    transition: opacity 0.3s;
-}
-
-.open .frontLabel {
-    opacity: 0;
-}
-
-/* The Letter Content - Hidden by default */
-.letterContent {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    background: white;
-    padding: 1.5rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1;
-    /* Behind everything initially */
-    opacity: 0;
-    /* Fully hidden */
-    transform: translateY(50px);
-    transition: all 0.8s ease-in-out;
+.flipFront {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    text-align: center;
+    justify-content: center;
+    gap: 1rem;
+    background: linear-gradient(145deg, #fff5f7, #ffe0e6);
+    box-shadow: 0 8px 30px rgba(233, 30, 99, 0.15);
 }
 
-.open .letterContent {
-    transform: translateY(-150px);
-    z-index: 4;
-    /* Above pocket */
-    opacity: 1;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+.flipFront img {
+    width: 140px;
+    height: 140px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+    transition: transform 0.3s ease;
 }
 
-.letterContent h3 {
-    margin: 0 0 1rem 0;
-    color: var(--hot-pink);
+.flipCard:hover .flipFront img {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.flipFront .giftLabel {
     font-family: var(--font-mynerve), cursive;
+    font-size: 1.2rem;
+    color: #d63384;
+    text-align: center;
+    padding: 0 1rem;
 }
 
-.letterContent p {
-    font-size: 1.1rem;
-    color: #555;
-    line-height: 1.5;
+.flipFront .tapHint {
+    font-size: 0.8rem;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.flipBack {
+    transform: rotateY(180deg);
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.flipBack .quizQuestion {
+    font-family: var(--font-mynerve), cursive;
+    font-size: 1.15rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.flipBack .optionBtn {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    background: #f9f9f9;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.9rem;
+    color: #444;
+    transition: all 0.2s;
+}
+
+.flipBack .optionBtn:hover {
+    background: #fff0f3;
+    border-color: #ff69b4;
+}
+
+.flipBack .optionBtn.selected {
+    background: #fff0f3;
+    border: 2px solid #ff4d4d;
+    font-weight: 600;
+}
+
+.flipBack .submitBtn {
+    margin-top: 0.75rem;
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #ff4d4d, #ff69b4);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.2s;
+}
+
+.flipBack .submitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* === LETTER CARD (after unlock) === */
+.letterCard {
+    width: 280px;
+    min-height: 200px;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+}
+
+.letterCard h3 {
+    font-family: var(--font-mynerve), cursive;
+    font-size: 1.4rem;
+    color: #d63384;
+    margin-bottom: 0.75rem;
+}
+
+.letterCard p {
+    font-family: var(--font-open-sans), sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #444;
+    white-space: pre-line;
+    flex: 1;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .container {
+    .lettersSection {
+        padding: 2rem 1rem;
+    }
+
+    .sectionTitle {
+        font-size: 2rem;
+    }
+
+    .grid {
         flex-direction: column;
-        gap: 3rem;
-        /* More space for vertical stacking */
-        margin-top: 2rem;
-        padding-bottom: 8rem;
+        align-items: center;
+        gap: 2rem;
     }
 
-    .envelopeContainer {
-        width: 90%;
-        max-width: 300px;
-        margin-right: 0;
-        margin-bottom: -40px;
-        /* Vertical overlap */
+    .flipCard {
+        width: 260px;
+        height: 300px;
     }
 
-    .envelopeContainer:hover {
-        margin-right: 0;
-        margin-bottom: 0;
-        transform: translateY(-20px) !important;
-    }
-
-    .envelopeContainer.open {
-        margin-bottom: 300px;
-        /* More space for open letter */
-    }
-
-    .flap {
-        border-top-width: 100px;
-        border-left-width: 45vw;
-        border-right-width: 45vw;
-    }
-
-    /* Adjust specific borders if max-width kicks in */
-    .flap,
-    .pocket {
-        border-left-width: 150px;
-        /* Match max-width 300px / 2 */
-        border-right-width: 150px;
-    }
-
-    /* But on very small screens < 300px? unlikely but */
-    @media (max-width: 340px) {
-
-        .flap,
-        .pocket {
-            border-left-width: 45vw;
-            border-right-width: 45vw;
-        }
+    .letterCard {
+        width: 260px;
     }
 }

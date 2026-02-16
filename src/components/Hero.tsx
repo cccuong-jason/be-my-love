@@ -1,6 +1,9 @@
 "use client";
 import dynamic from 'next/dynamic';
+import { motion } from 'framer-motion';
 import styles from './Hero.module.css';
+import TypewriterTitle from './TypewriterTitle';
+import ParallaxSection from './ParallaxSection';
 
 const Heart3D = dynamic(() => import('./Heart3D'), {
     ssr: false,
@@ -16,11 +19,16 @@ export default function Hero() {
     const couple = useContentStore((state) => state.couple);
 
     return (
-        <section className={styles.hero}>
+        <ParallaxSection className={styles.hero} parallaxDistance={50}>
             <div className={styles.content}>
-                <h1>
-                    <EditableText section="hero" field="title" value={hero.title} />
-                </h1>
+                <motion.h1
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1 }}
+                    className={styles.title}
+                >
+                    <TypewriterTitle titles={[hero.title, "My Love", "My Valentine", "My Everything"]} />
+                </motion.h1>
                 <h2 style={{ fontSize: '2rem', color: 'var(--hot-pink)', margin: '0.5rem 0' }}>
                     <EditableText section="couple" field="partnerName" value={couple.partnerName} />
                     {' & '}
@@ -31,8 +39,6 @@ export default function Hero() {
                 </p>
 
             </div>
-
-
-        </section>
+        </ParallaxSection>
     );
 }

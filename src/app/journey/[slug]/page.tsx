@@ -1,8 +1,8 @@
 import Hero from "@/components/Hero";
+import Gallery from "@/components/Gallery";
 import Journey from "@/components/Journey";
 import Letters from "@/components/Letters";
 import Interactive from "@/components/Interactive";
-import QuizGame from "@/components/Games/QuizGame";
 import FloatingAssets from "@/components/FloatingAssets";
 import MusicPlayer from "@/components/MusicPlayer";
 import Footer from "@/components/Footer";
@@ -33,7 +33,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ slug: 
             <Hero />
             <Journey />
             <Letters />
-            <QuizGame />
+            <Gallery />
             <Interactive />
             <Footer />
         </main>

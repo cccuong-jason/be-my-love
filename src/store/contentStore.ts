@@ -27,7 +27,28 @@ export interface ContentState {
     };
     letters: {
         title: string;
-        items: { id: number; title: string; content: string; color: string }[];
+        items: {
+            id: number;
+            title: string;
+            content: string;
+            color: string;
+            isLocked?: boolean;
+            lockQuestion?: string;
+            lockOptions?: string[];
+            lockAnswer?: number;
+            isUnlocked?: boolean; // Client-side state
+            contextImage?: string; // Image shown after unlocking
+        }[];
+    };
+    gallery: {
+        title: string;
+        images: {
+            id: string;
+            src: string;
+            caption: string;
+            description?: string; // New field
+            rotation: number
+        }[];
     };
     interactive: {
         question: string;
@@ -94,10 +115,41 @@ export const defaultContent = {
     letters: {
         title: "Love Notes",
         items: [
-            { id: 1, title: "Open When You're Happy", content: "Remember this moment and smile! You deserve all the joy in the world.", color: "#ffe4e1" },
-            { id: 2, title: "Open When You Miss Me", content: "Look at the moon, I'm looking at it too. We are under the same sky.", color: "#fff0f5" },
-            { id: 3, title: "Open When You Need a Hug", content: "Sending you the biggest, warmest virtual hug right now! (and a real one soon)", color: "#f0fff0" },
+            {
+                id: 1,
+                title: "Open When You're Happy",
+                content: "Remember this moment and smile! You deserve all the joy in the world.",
+                color: "#ffe0e6",
+                isLocked: false,
+                contextImage: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=500&q=60" // Example context image
+            },
+            {
+                id: 2,
+                title: "Open When You Miss Me",
+                content: "I'm always with you in spirit. Close your eyes and feel my hug.",
+                color: "#fff0f5",
+                isLocked: true,
+                lockQuestion: "Where did we have our first kiss?",
+                lockOptions: ["Park", "Car", "Doorstep", "Beach"],
+                lockAnswer: 2,
+                contextImage: ""
+            },
+            {
+                id: 3,
+                title: "Open When You Need a Hug",
+                content: "Sending you the biggest, warmest virtual hug right now! (and a real one soon)",
+                color: "#f0fff0",
+                isLocked: false
+            },
         ],
+    },
+    gallery: {
+        title: "Moments",
+        images: [
+            { id: "1", src: "https://picsum.photos/id/10/400/600", caption: "Nature Memory", description: "A beautiful day in the woods.", rotation: -2 },
+            { id: "2", src: "https://picsum.photos/id/11/400/600", caption: "Walk in Park", description: "Walking hand in hand.", rotation: 3 },
+            { id: "3", src: "https://picsum.photos/id/12/400/600", caption: "Beach Day", description: "Sun, sand, and you.", rotation: -5 },
+        ]
     },
     interactive: {
         question: "Will you be my Valentine?",
