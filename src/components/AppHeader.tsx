@@ -10,10 +10,12 @@ function HeaderContent({ hasClerkKey }: { hasClerkKey: boolean }) {
 
     return (
         <header style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 1000, display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
-            <div style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Image src="/logo.png" alt="Be My Love Logo" width={50} height={50} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} />
-                <span style={{ fontFamily: 'var(--font-pacifico), cursive', fontSize: '1.8rem', color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>Be My Love</span>
-            </div>
+            {!isPublic && (
+                <div style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Image src="/logo.png" alt="Be My Love Logo" width={50} height={50} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} />
+                    <span style={{ fontFamily: 'var(--font-pacifico), cursive', fontSize: '1.8rem', color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>Be My Love</span>
+                </div>
+            )}
 
             {!isPublic && hasClerkKey && (
                 <div style={{ pointerEvents: 'auto', display: 'flex', gap: '15px', alignItems: 'center' }}>
