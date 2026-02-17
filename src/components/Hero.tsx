@@ -27,7 +27,7 @@ export default function Hero() {
                     transition={{ duration: 1 }}
                     className={styles.title}
                 >
-                    <TypewriterTitle titles={[hero.title, "My Love", "My Valentine", "My Everything"]} />
+                    <TypewriterTitle titles={hero.titles || ["My Love"]} />
                 </motion.h1>
                 <h2 style={{ fontSize: '2rem', color: 'var(--hot-pink)', margin: '0.5rem 0' }}>
                     <EditableText section="couple" field="partnerName" value={couple.partnerName} />

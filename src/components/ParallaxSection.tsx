@@ -53,15 +53,13 @@ const ParallaxSection = forwardRef<HTMLElement, ParallaxSectionProps>(
                         }}
                     />
                 )}
-                <div style={{ position: 'relative', zIndex: 1 }}>
+                <motion.div style={{ position: 'relative', zIndex: 1, y: !backgroundImage ? y : 0 }}>
                     {/* 
-                We can apply a subtle parallax to the content too if desired, 
-                or just keep it static relative to the section. 
-                For now, let's keep content static and let the section be the container.
-                If specific children need parallax, they can use `useScroll` internally or we can expose it.
-            */}
+                        If no background image is provided, we apply the parallax effect to the content itself.
+                        This creates a "floating" feel for the section content relative to the scroll.
+                     */}
                     {children}
-                </div>
+                </motion.div>
             </section>
         );
     }

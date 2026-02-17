@@ -69,9 +69,13 @@ const ToastItem = ({ toast, removeToast }: { toast: ToastMessage, removeToast: (
 };
 
 export default function ToastContainer({ toasts, removeToast }: ToastContainerProps) {
-    if (typeof window === 'undefined') return null;
+    const [mounted, setMounted] = React.useState(false);
 
-    return createPortal(
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    return mounted ? createPortal(
         <div style={{
             position: 'fixed',
             bottom: '20px',
@@ -92,5 +96,5 @@ export default function ToastContainer({ toasts, removeToast }: ToastContainerPr
             </AnimatePresence>
         </div>,
         document.body
-    );
+    ) : null;
 }

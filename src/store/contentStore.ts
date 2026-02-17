@@ -3,7 +3,7 @@ import { create } from 'zustand';
 
 export interface ContentState {
     hero: {
-        title: string;
+        titles: string[];
         subtitle: string;
     };
     couple: {
@@ -69,7 +69,7 @@ export interface ContentState {
 
 export const defaultContent = {
     hero: {
-        title: "To My Valentine",
+        titles: ["To My Valentine", "My Love", "My Everything"],
         subtitle: "A journey of love...",
     },
     couple: {

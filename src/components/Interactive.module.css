@@ -70,6 +70,10 @@
     border-radius: 30px;
     text-align: center;
     animation: fadeIn 1s;
+    max-width: 600px;
+    width: 100%;
+    overflow-wrap: break-word;
+    margin: 0 auto;
 }
 
 .success h2 {

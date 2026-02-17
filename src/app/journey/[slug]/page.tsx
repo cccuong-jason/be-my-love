@@ -33,7 +33,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ slug: 
             <Hero />
             <Journey />
             <Letters />
-            <Gallery />
+            {/* <Gallery /> */}
             <Interactive />
             <Footer />
         </main>

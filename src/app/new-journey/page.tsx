@@ -32,7 +32,7 @@ export default function NewJourneyPage() {
                 ...defaultContent,
                 hero: {
                     ...defaultContent.hero,
-                    title: title || defaultContent.hero.title,
+                    titles: [title || "My Love", "To My Valentine", "My Everything"],
                 },
                 couple: {
                     yourName: yourName || defaultContent.couple.yourName,

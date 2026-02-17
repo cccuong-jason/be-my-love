@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { useContentStore } from '@/store/contentStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './Editor.module.css';
-import { Wand2, X, ChevronDown, Check, Save, Share2, Copy, ExternalLink } from 'lucide-react';
+import { Trash2, Plus, GripVertical, X, Upload, Wand2, ChevronDown, Check, Save, Share2, Copy, ExternalLink } from 'lucide-react';
+import FileUploader from '../UI/FileUploader';
 import { usePathname } from 'next/navigation';
 import ToastContainer, { ToastMessage, ToastType } from '../UI/Toast';
 import Loading from '../UI/Loading';
@@ -152,6 +154,10 @@ export default function EditorUI() {
             if (res.ok) {
                 await res.json();
                 addToast("Journey saved successfully!", 'success');
+
+                // Auto Cleanup in background
+                fetch('/api/cleanup', { method: 'POST' }).catch(console.error);
+
             } else {
                 const err = await res.json();
                 const errMsg = err.error || "Unknown error";
@@ -167,7 +173,7 @@ export default function EditorUI() {
 
     const [journeyUrl, setJourneyUrl] = useState('');
     useEffect(() => {
-        setJourneyUrl(`${window.location.origin}/journey/${customSlug || 'your-link-name'}?public=true`);
+        setJourneyUrl(`${window.location.origin} /journey/${customSlug || 'your-link-name'}?public = true`);
     }, [customSlug]);
 
     const copyLink = () => {
@@ -175,7 +181,7 @@ export default function EditorUI() {
             addToast("Please save your journey first or enter a custom link name.", 'info');
             return;
         }
-        navigator.clipboard.writeText(`${window.location.origin}/journey/${customSlug}?public=true`);
+        navigator.clipboard.writeText(`${window.location.origin} /journey/${customSlug}?public = true`);
         addToast("Link copied to clipboard!", 'success');
     };
 
@@ -216,12 +222,10 @@ export default function EditorUI() {
         }
     };
 
-    // Only show on journey pages
-    if (!pathname.startsWith('/journey/')) return null;
+    // Instead of early return, we render conditionally to keep hooks order consistent
+    const shouldRender = pathname.startsWith('/journey/') && !isPublic;
 
-    if (isPublic) return null;
-
-    return (
+    return shouldRender ? (
         <>
             <Loading isLoading={isLoading} message={loadingMessage} />
             <ToastContainer toasts={toasts} removeToast={removeToast} />
@@ -264,13 +268,42 @@ export default function EditorUI() {
                     </AccordionItem>
 
                     <AccordionItem title="Hero Texts">
-                        <div className={styles.floatingInput}>
-                            <input
-                                placeholder=" "
-                                value={hero.title}
-                                onChange={(e) => updateSection('hero', { title: e.target.value })}
-                            />
-                            <label>Main Title</label>
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', display: 'block' }}>Typewriter Titles (Cycle)</label>
+                            {(hero.titles || ["To My Valentine"]).map((title: string, idx: number) => (
+                                <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                    <input
+                                        className={styles.cleanInput}
+                                        value={title}
+                                        onChange={(e) => {
+                                            const newTitles = [...(hero.titles || [])];
+                                            newTitles[idx] = e.target.value;
+                                            updateSection('hero', { titles: newTitles });
+                                        }}
+                                    />
+                                    <button
+                                        className={`${styles.controlBtn} ${styles.danger} `}
+                                        onClick={() => {
+                                            const newTitles = hero.titles.filter((_, i) => i !== idx);
+                                            updateSection('hero', { titles: newTitles });
+                                        }}
+                                        title="Remove Title"
+                                        disabled={hero.titles?.length <= 1}
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                </div>
+                            ))}
+                            <button
+                                className={styles.addBtn}
+                                style={{ marginTop: '0.5rem' }}
+                                onClick={() => {
+                                    const newTitles = [...(hero.titles || []), "New Title"];
+                                    updateSection('hero', { titles: newTitles });
+                                }}
+                            >
+                                + Add Title
+                            </button>
                         </div>
                         <div className={styles.floatingInput}>
                             <input
@@ -381,50 +414,19 @@ export default function EditorUI() {
                                                 updateSection('timeline', { events: newEvts });
                                             }}
                                         />
-                                        <label className={styles.uploadBtn}>
-                                            Upload
-                                            <input
-                                                type="file"
-                                                hidden
-                                                onChange={(e) => handleFileUpload('timeline', e, (val) => {
-                                                    const newEvts = [...timeline.events];
-                                                    newEvts[i].image = val;
-                                                    updateSection('timeline', { events: newEvts });
-                                                })}
-                                            />
-                                        </label>
                                     </div>
-                                    {evt.image && (
-                                        <div style={{ position: 'relative', marginTop: '0.5rem', width: '100%', maxWidth: '200px', height: '150px', border: '1px solid #eee', borderRadius: '8px', overflow: 'hidden' }}>
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={evt.image} alt="Event" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                            <button
-                                                onClick={async () => {
-                                                    if (confirm("Remove image?")) {
-                                                        const newEvts = [...timeline.events];
-                                                        const url = newEvts[i].image;
-                                                        newEvts[i].image = "";
-                                                        updateSection('timeline', { events: newEvts });
-
-                                                        if (url) {
-                                                            try {
-                                                                await fetch('/api/delete', {
-                                                                    method: 'POST',
-                                                                    headers: { 'Content-Type': 'application/json' },
-                                                                    body: JSON.stringify({ url })
-                                                                });
-                                                                addToast("Image removed from storage", 'success');
-                                                            } catch (e) { console.error("Delete failed", e); }
-                                                        }
-                                                    }
-                                                }}
-                                                style={{ position: 'absolute', top: 5, right: 5, background: 'rgba(255,255,255,0.9)', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
-                                                title="Remove Image"
-                                            >
-                                                <X size={16} color="#ff4d4d" />
-                                            </button>
-                                        </div>
-                                    )}
+                                    <div style={{ marginTop: '0.5rem' }}>
+                                        <FileUploader
+                                            onUpload={(url) => {
+                                                const newEvts = [...timeline.events];
+                                                newEvts[i].image = url;
+                                                updateSection("timeline", { events: newEvts });
+                                            }}
+                                            currentValue={evt.image}
+                                            label="Upload Event Image"
+                                            folderPath="timeline"
+                                        />
+                                    </div>
                                 </motion.div>
                             ))}
                         </AnimatePresence>
@@ -499,7 +501,7 @@ export default function EditorUI() {
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M19 12l-7 7-7-7" /></svg>
                                         </button>
                                         <button
-                                            className={`${styles.controlBtn} ${styles.danger}`}
+                                            className={`${styles.controlBtn} ${styles.danger} `}
                                             onClick={() => {
                                                 if (confirm("Delete this love note?")) {
                                                     const newItems = letters.items.filter((_: any, idx: number) => idx !== i);
@@ -583,7 +585,7 @@ export default function EditorUI() {
                                                             <div key={optIdx} style={{ display: 'flex', alignItems: 'center' }}>
                                                                 <input
                                                                     type="radio"
-                                                                    name={`correct-${i}`}
+                                                                    name={`correct - ${i} `}
                                                                     checked={letter.lockAnswer === optIdx}
                                                                     onChange={() => {
                                                                         const newLetters = [...letters.items];
@@ -595,7 +597,7 @@ export default function EditorUI() {
                                                                 />
                                                                 <input
                                                                     className={styles.cleanInput}
-                                                                    placeholder={`Option ${optIdx + 1}`}
+                                                                    placeholder={`Option ${optIdx + 1} `}
                                                                     value={letter.lockOptions?.[optIdx] || ""}
                                                                     onChange={(e) => {
                                                                         const newLetters = [...letters.items];
@@ -664,7 +666,7 @@ export default function EditorUI() {
                         <div className={styles.floatingInput}>
                             <input
                                 placeholder=" "
-                                value={useContentStore((state) => state.gallery?.title || "Moments")}
+                                value={gallery?.title || "Moments"}
                                 onChange={(e) => updateSection('gallery', { title: e.target.value })}
                             />
                             <label>Gallery Title</label>
@@ -739,31 +741,30 @@ export default function EditorUI() {
                                 </div>
                             ))}
 
-                            <label className={styles.addBtn} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '150px', border: '2px dashed #ffb6c1', cursor: 'pointer' }}>
-                                <span>+ Upload Photo</span>
-                                <input
-                                    type="file"
-                                    hidden
-                                    accept="image/*"
-                                    multiple
-                                    onChange={(e) => {
-                                        if (e.target.files) {
-                                            Array.from(e.target.files).forEach((file) => {
-                                                handleFileUpload('gallery', { target: { files: [file] } }, (url) => {
-                                                    const currentImgs = gallery?.images || [];
-                                                    const newImg = {
-                                                        id: crypto.randomUUID(),
-                                                        src: url,
-                                                        caption: "New Memory",
-                                                        rotation: Math.floor(Math.random() * 20) - 10
-                                                    };
-                                                    updateSection('gallery', { images: [...currentImgs, newImg] });
-                                                });
-                                            });
-                                        }
+                            <div style={{
+                                width: '100%',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                padding: '1rem',
+                                border: '2px dashed #ffb6c1',
+                                borderRadius: '12px',
+                                background: '#fff0f5'
+                            }}>
+                                <FileUploader
+                                    onUpload={(url) => {
+                                        const currentImgs = gallery?.images || [];
+                                        const newImg = {
+                                            id: crypto.randomUUID(),
+                                            src: url,
+                                            caption: "New Memory",
+                                            rotation: Math.floor(Math.random() * 20) - 10
+                                        };
+                                        updateSection('gallery', { images: [...currentImgs, newImg] });
                                     }}
+                                    label="Add New Photo to Gallery"
+                                    folderPath="gallery"
                                 />
-                            </label>
+                            </div>
                         </div>
                     </AccordionItem>
                     <AccordionItem title="Proposal (Interactive)">
@@ -798,7 +799,7 @@ export default function EditorUI() {
                                         }}
                                     />
                                     <button
-                                        className={`${styles.controlBtn} ${styles.danger}`}
+                                        className={`${styles.controlBtn} ${styles.danger} `}
                                         onClick={() => {
                                             const newTexts = interactive.noTexts.filter((_: any, i: number) => i !== idx);
                                             updateSection('interactive', { noTexts: newTexts });
@@ -877,6 +878,12 @@ export default function EditorUI() {
                                 </a>
                             </div>
                         </div>
+
+                        <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: "1px solid #eee" }}>
+                            <p style={{ fontSize: '0.8rem', color: '#999', marginTop: '0.25rem', textAlign: 'center' }}>
+                                Unused images are automatically cleaned up when you save.
+                            </p>
+                        </div>
                     </AccordionItem>
 
                 </div>
@@ -889,5 +896,5 @@ export default function EditorUI() {
                 </div>
             </div >
         </>
-    );
+    ) : null;
 }

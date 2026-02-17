@@ -32,7 +32,11 @@ export default function LockableLetter({ letter, index }: LockableLetterProps) {
     const handleAnswer = () => {
         if (selectedOption === null) return;
 
-        if (selectedOption === letter.lockAnswer) {
+        // Robust check: compare index OR string value just in case data is mixed
+        const isCorrectIndex = Number(selectedOption) === Number(letter.lockAnswer);
+        const isCorrectValue = letter.lockOptions && letter.lockOptions[selectedOption] === letter.lockAnswer;
+
+        if (isCorrectIndex || isCorrectValue) {
             confetti({
                 particleCount: 150,
                 spread: 100,
@@ -43,7 +47,7 @@ export default function LockableLetter({ letter, index }: LockableLetterProps) {
             // If context image exists, show it first, otherwise go straight to letter
             if (letter.contextImage) {
                 setStage('CONTEXT');
-                setTimeout(() => setStage('LETTER'), 3500); // Show context for 3.5s
+                setTimeout(() => setStage('LETTER'), 1500); // Reduced from 3500ms -> 1.5s
             } else {
                 setStage('LETTER');
             }
@@ -79,7 +83,7 @@ export default function LockableLetter({ letter, index }: LockableLetterProps) {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.1 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.5 }} // Faster fade in
                 style={{
                     width: '300px',
                     height: '350px',
@@ -115,18 +119,24 @@ export default function LockableLetter({ letter, index }: LockableLetterProps) {
             transition={{ delay: index * 0.1 }}
             className={styles.flipCard}
             onClick={stage === 'GIFT' ? handleFlip : undefined}
-            style={{ perspective: '1000px' }} // Ensure 3D context
+            style={{
+                perspective: '1000px',
+                cursor: stage === 'GIFT' ? 'pointer' : 'default',
+                zIndex: stage === 'QUIZ' ? 10 : 1
+            }}
         >
             <motion.div
-                className={`${styles.flipInner} ${stage === 'QUIZ' ? styles.flipped : ''}`}
-                animate={
-                    shake ? { x: [-10, 10, -10, 10, 0] } :
-                        (stage === 'GIFT' ? { y: [0, -8, 0] } : {}) // Idle floating animation
-                }
-                transition={
-                    shake ? { duration: 0.4 } :
-                        (stage === 'GIFT' ? { repeat: Infinity, duration: 3, ease: "easeInOut" } : {})
-                }
+                className={styles.flipInner}
+                animate={{
+                    rotateY: stage === 'QUIZ' ? 180 : 0,
+                    x: shake ? [-10, 10, -10, 10, 0] : 0,
+                    y: (stage === 'GIFT' && !shake) ? [0, -8, 0] : 0
+                }}
+                transition={{
+                    rotateY: { duration: 0.4, ease: "easeInOut" }, // Faster flip (0.8 -> 0.4)
+                    y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+                    x: { duration: 0.4 }
+                }}
             >
                 {/* FRONT — Gift SVG */}
                 <div className={styles.flipFront}>
@@ -137,7 +147,7 @@ export default function LockableLetter({ letter, index }: LockableLetterProps) {
                 </div>
 
                 {/* BACK — Quiz */}
-                <div className={styles.flipBack}>
+                <div className={styles.flipBack} onClick={(e) => e.stopPropagation()}>
                     <p className={styles.quizQuestion}>
                         {letter.lockQuestion || "Answer to unlock..."}
                     </p>
@@ -146,10 +156,7 @@ export default function LockableLetter({ letter, index }: LockableLetterProps) {
                             <button
                                 key={i}
                                 className={`${styles.optionBtn} ${selectedOption === i ? styles.selected : ''}`}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedOption(i);
-                                }}
+                                onClick={() => setSelectedOption(i)}
                             >
                                 {opt}
                             </button>
@@ -158,10 +165,7 @@ export default function LockableLetter({ letter, index }: LockableLetterProps) {
                     <button
                         className={styles.submitBtn}
                         disabled={selectedOption === null}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleAnswer();
-                        }}
+                        onClick={handleAnswer}
                     >
                         Confirm Answer
                     </button>
