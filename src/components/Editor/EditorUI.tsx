@@ -611,34 +611,23 @@ export default function EditorUI() {
                                                         ))}
                                                     </div>
                                                     <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '2px' }}>* Select the radio button for the correct answer.</p>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div style={{ marginTop: '0.5rem' }}>
-                                            <label style={{ fontSize: '0.8rem', fontWeight: 'bold', display: 'block', marginBottom: '4px' }}>
-                                                Context Image (Revealed after unlocking)
-                                            </label>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                {letter.contextImage && (
-                                                    // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={letter.contextImage} alt="Context" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
-                                                )}
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    onChange={(e) => {
-                                                        if (e.target.files && e.target.files[0]) {
-                                                            handleFileUpload('letters', { target: { files: e.target.files } }, (url) => {
+                                                    <div style={{ marginTop: '0.5rem' }}>
+                                                        <label style={{ fontSize: '0.8rem', fontWeight: 'bold', display: 'block', marginBottom: '4px' }}>
+                                                            Context Image (Revealed after unlocking)
+                                                        </label>
+                                                        <FileUploader
+                                                            onUpload={(url) => {
                                                                 const newLetters = [...letters.items];
                                                                 newLetters[i].contextImage = url;
                                                                 updateSection('letters', { items: newLetters });
-                                                            });
-                                                        }
-                                                    }}
-                                                    style={{ fontSize: '0.8rem' }}
-                                                />
-                                            </div>
+                                                            }}
+                                                            currentValue={letter.contextImage}
+                                                            label="Upload Context Image"
+                                                            folderPath="letters"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </motion.div>

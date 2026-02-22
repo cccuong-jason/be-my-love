@@ -4,34 +4,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.main {
+/* We no longer need inline snap alignment, handled by WaklthroughController divs */
+.main>section {
   width: 100%;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
 
-  .main {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .main>section,
-  .main>footer {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* Center content vertically for cinematic feel */
-    position: relative;
-  }
-
-  /* Adjust Footer height */
-  .main>footer {
-    min-height: 50vh;
-    /* Footer doesn't need full height */
-    justify-content: flex-end;
-  }
+/* Adjust Footer height */
+.main>footer {
+  width: 100%;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
 }

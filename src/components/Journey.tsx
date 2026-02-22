@@ -3,11 +3,16 @@ import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useContentStore } from '@/store/contentStore';
 import styles from './Journey.module.css';
+import { createPortal } from 'react-dom';
 
 export default function Journey() {
     const timeline = useContentStore((state) => state.timeline);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedEvent, setSelectedEvent] = useState<typeof timeline.events[0] | null>(null);
+    const [exitDirection, setExitDirection] = useState(-1);
+
+    const [isMounted, setIsMounted] = useState(false);
+    React.useEffect(() => setIsMounted(true), []);
 
     // Sound Effect
     const playSwipeSound = () => {
@@ -20,7 +25,8 @@ export default function Journey() {
         }
     };
 
-    const handleNext = () => {
+    const handleNext = (direction: number) => {
+        setExitDirection(direction);
         playSwipeSound();
         setCurrentIndex((prev) => prev + 1);
     };
@@ -42,16 +48,21 @@ export default function Journey() {
                 return x - Math.floor(x);
             };
 
-            const rotation = (pseudoRandom(index) * 40) - 20; // -20 to 20 deg
-            const xOffset = (pseudoRandom(index + 100) * 50) - 25; // -25 to 25 px
-            const yOffset = (pseudoRandom(index + 200) * 50) - 25; // -25 to 25 px
+            const baseRotation = (pseudoRandom(index) * 40) - 20; // -20 to 20 deg
+            const baseXOffset = (pseudoRandom(index + 100) * 50) - 25; // -25 to 25 px
+            const baseYOffset = (pseudoRandom(index + 200) * 50) - 25; // -25 to 25 px
+
+            // The on top photo always has no rotation, it must be straight vertical
+            const rotation = i === 0 ? 0 : baseRotation;
+            const xOffset = i === 0 ? 0 : baseXOffset;
+            const yOffset = i === 0 ? 0 : baseYOffset;
+
+            const stableIndex = index % 1000; // Large arbitrary limit before looping perfectly
+            const uniqueKey = `card-slot-${stableIndex}`;
 
             return {
                 event: event,
-                // Unique key must include index so React treats it as a new distinct position in the stack
-                // But efficient reordering? Motion handles Layout.
-                // Using just event.id would cause jumping if duplicates are present.
-                uniqueKey: `${event.id}-${index}`,
+                uniqueKey: uniqueKey,
                 offsetIndex: i, // 0 = front
                 rotation,
                 xOffset,
@@ -72,7 +83,7 @@ export default function Journey() {
             </motion.h2>
 
             <div className={styles.stackContainer}>
-                <AnimatePresence mode='popLayout'>
+                <AnimatePresence custom={exitDirection}>
                     {cardsToShow.map((item) => (
                         <Card
                             key={item.uniqueKey}
@@ -94,40 +105,50 @@ export default function Journey() {
             </div>
 
             {/* Immersive Modal */}
-            <AnimatePresence>
-                {selectedEvent && (
-                    <motion.div
-                        className={styles.overlay}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setSelectedEvent(null)}
-                    >
+            {isMounted && document.body && createPortal(
+                <AnimatePresence>
+                    {selectedEvent && (
                         <motion.div
-                            className={styles.modal}
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            onClick={(e) => e.stopPropagation()}
+                            className={styles.overlay}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedEvent(null)}
                         >
-                            <button className={styles.closeButton} onClick={() => setSelectedEvent(null)}>✕</button>
+                            <motion.div
+                                className={styles.modal}
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <button className={styles.closeButton} onClick={() => setSelectedEvent(null)}>✕</button>
 
-                            <div className={styles.modalImageContainer}>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={selectedEvent.image} alt={selectedEvent.title} className={styles.modalImage} />
-                            </div>
-
-                            <div className={styles.modalContent}>
-                                <h3 className={styles.modalTitle}>{selectedEvent.title}</h3>
-                                <p className={styles.modalDescription}>{selectedEvent.description}</p>
-                                <div style={{ fontSize: '0.9rem', opacity: 0.7, fontFamily: 'var(--font-open-sans)' }}>
-                                    {selectedEvent.date}
+                                <div className={styles.modalImageContainer}>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src={selectedEvent.image || 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=800&auto=format&fit=crop'}
+                                        alt={selectedEvent.title}
+                                        className={styles.modalImage}
+                                        onError={(e) => {
+                                            e.currentTarget.src = 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=800&auto=format&fit=crop';
+                                        }}
+                                    />
                                 </div>
-                            </div>
+
+                                <div className={styles.modalContent}>
+                                    <h3 className={styles.modalTitle}>{selectedEvent.title}</h3>
+                                    <p className={styles.modalDescription}>{selectedEvent.description}</p>
+                                    <div style={{ fontSize: '0.9rem', opacity: 0.7, fontFamily: 'var(--font-open-sans)' }}>
+                                        {selectedEvent.date}
+                                    </div>
+                                </div>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </section>
     );
 }
@@ -135,7 +156,7 @@ export default function Journey() {
 interface CardProps {
     event: any;
     isFront: boolean;
-    onSwipe: () => void;
+    onSwipe: (direction: number) => void;
     onSelect: () => void;
     rotation: number;
     xOffset: number;
@@ -150,7 +171,7 @@ function Card({ event, isFront, onSwipe, onSelect, rotation, xOffset, yOffset }:
             style={{
                 cursor: isFront ? 'grab' : 'default',
             }}
-            initial={{ scale: 0.8, opacity: 0, y: 50 }}
+            initial={isFront ? false : { opacity: 0, scale: 0.95 }}
             animate={{
                 scale: 1,
                 opacity: 1,
@@ -158,27 +179,38 @@ function Card({ event, isFront, onSwipe, onSelect, rotation, xOffset, yOffset }:
                 x: xOffset,
                 y: yOffset
             }}
-            exit={{
-                x: -300,
-                opacity: 0,
-                rotate: -40,
-                transition: { duration: 0.3 }
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            variants={{
+                exit: (direction: number) => ({
+                    x: direction * 300,
+                    opacity: 0,
+                    rotate: direction * 40,
+                    transition: { duration: 0.3 }
+                })
             }}
+            exit="exit"
             drag={isFront ? "x" : false} // Only front card is draggable
-            dragConstraints={{ left: 0, right: 0 }}
+            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
             onDragEnd={(_, info) => {
                 if (Math.abs(info.offset.x) > 100) {
-                    onSwipe();
+                    onSwipe(info.offset.x > 0 ? 1 : -1);
                 }
             }}
             whileHover={isFront ? { scale: 1.05 } : {}}
             onClick={() => isFront && onSelect()}
-            layout
+            style={{ position: 'absolute' }}
         >
             <div className={styles.cardDate}>{event.date}</div>
             <div className={styles.cardImageContainer}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={event.image} alt={event.title} className={styles.cardImage} />
+                <img
+                    src={event.image || 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=800&auto=format&fit=crop'}
+                    alt={event.title}
+                    className={styles.cardImage}
+                    onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=800&auto=format&fit=crop';
+                    }}
+                />
             </div>
             <div className={styles.cardContent}>
                 <h3 className={styles.cardTitle}>{event.title}</h3>

@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import styles from "../../page.module.css"; // Adjust import path for css
 import { loadJourney } from "@/lib/journeyService";
 import StoreHydrator from "@/components/StoreHydrator";
+import WalkthroughController from "@/components/WalkthroughController";
 
 // Params type for dynamic route
 export default async function JourneyPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -30,12 +31,12 @@ export default async function JourneyPage({ params }: { params: Promise<{ slug: 
             <StoreHydrator data={initialData} slug={slug} />
             <FloatingAssets />
             <MusicPlayer />
-            <Hero />
-            <Journey />
-            <Letters />
-            {/* <Gallery /> */}
-            <Interactive />
-            <Footer />
+            <WalkthroughController>
+                <Hero />
+                <Journey />
+                <Letters />
+                <Interactive />
+            </WalkthroughController>
         </main>
     );
 }

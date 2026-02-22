@@ -1,12 +1,18 @@
 .footer {
-    padding: 2rem;
+    padding: 1rem;
     text-align: center;
-    background: var(--bg-gradient);
+    background: transparent;
     color: var(--dark-gray);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    pointer-events: auto;
 }
 
 .footer p {
-    margin: 0.5rem 0;
+    margin: 0.25rem 0;
+    pointer-events: auto;
 }

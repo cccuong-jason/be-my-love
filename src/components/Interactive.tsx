@@ -5,6 +5,7 @@ import { useContentStore } from '@/store/contentStore';
 import EditableText from './Editor/EditableText';
 import styles from './Interactive.module.css';
 import ParallaxSection from './ParallaxSection';
+import Footer from './Footer';
 
 export default function Interactive() {
     const interactive = useContentStore((state) => state.interactive);
@@ -47,41 +48,44 @@ export default function Interactive() {
     };
 
     return (
-        <ParallaxSection className={styles.interactive} parallaxDistance={60}>
-            {!accepted ? (
-                <div className={styles.container}>
-                    <h2>
-                        <EditableText section="interactive" field="question" value={interactive.question} />
-                    </h2>
-                    <div className={styles.buttons}>
-                        <button
-                            className={styles.yesButton}
-                            style={{ transform: `scale(${yesSize})` }}
-                            onClick={handleYes}
-                        >
-                            <EditableText section="interactive" field="yesText" value={interactive.yesText} />
-                        </button>
-                        <button
-                            className={styles.noButton}
-                            style={{ transform: `translate(${noPosition.x}px, ${noPosition.y}px)` }}
-                            onMouseEnter={handleNoHover}
-                            onTouchStart={handleNoHover}
-                            onClick={handleNoHover}
-                        >
-                            {interactive.noTexts[noTextIndex]}
-                        </button>
+        <>
+            <ParallaxSection className={styles.interactive} parallaxDistance={0}>
+                {!accepted ? (
+                    <div className={styles.container}>
+                        <h2>
+                            <EditableText section="interactive" field="question" value={interactive.question} />
+                        </h2>
+                        <div className={styles.buttons}>
+                            <button
+                                className={styles.yesButton}
+                                style={{ transform: `scale(${yesSize})` }}
+                                onClick={handleYes}
+                            >
+                                <EditableText section="interactive" field="yesText" value={interactive.yesText} />
+                            </button>
+                            <button
+                                className={styles.noButton}
+                                style={{ transform: `translate(${noPosition.x}px, ${noPosition.y}px)` }}
+                                onMouseEnter={handleNoHover}
+                                onTouchStart={handleNoHover}
+                                onClick={handleNoHover}
+                            >
+                                {interactive.noTexts[noTextIndex]}
+                            </button>
+                        </div>
                     </div>
-                </div>
-            ) : (
-                <div className={styles.success}>
-                    <h2>
-                        <EditableText section="interactive" field="successTitle" value={interactive.successTitle} />
-                    </h2>
-                    <p>
-                        <EditableText section="interactive" field="successText" value={interactive.successText} />
-                    </p>
-                </div>
-            )}
-        </ParallaxSection>
+                ) : (
+                    <div className={styles.success}>
+                        <h2>
+                            <EditableText section="interactive" field="successTitle" value={interactive.successTitle} />
+                        </h2>
+                        <p>
+                            <EditableText section="interactive" field="successText" value={interactive.successText} />
+                        </p>
+                    </div>
+                )}
+            </ParallaxSection>
+            <Footer />
+        </>
     );
 }

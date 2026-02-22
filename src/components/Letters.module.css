@@ -92,67 +92,111 @@
     gap: 4px;
 }
 
-.flipBack {
-    transform: rotateY(180deg);
+/* === QUIZ MODAL === */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.modalCard {
     background: white;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-.flipBack .quizQuestion {
+.closeModalBtn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.closeModalBtn:hover {
+    color: #333;
+}
+
+.modalCard .quizQuestion {
     font-family: var(--font-mynerve), cursive;
-    font-size: 1.15rem;
+    font-size: 1.4rem;
     color: #333;
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+    line-height: 1.4;
 }
 
-.flipBack .optionBtn {
+.modalCard .optionBtn {
     width: 100%;
-    padding: 10px 14px;
-    margin-bottom: 8px;
-    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-radius: 12px;
     border: 1px solid #eee;
-    background: #f9f9f9;
+    background: #fdfdfd;
     cursor: pointer;
     text-align: left;
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #444;
     transition: all 0.2s;
 }
 
-.flipBack .optionBtn:hover {
+.modalCard .optionBtn:hover {
     background: #fff0f3;
     border-color: #ff69b4;
+    transform: translateY(-1px);
 }
 
-.flipBack .optionBtn.selected {
+.modalCard .optionBtn.selected {
     background: #fff0f3;
     border: 2px solid #ff4d4d;
     font-weight: 600;
 }
 
-.flipBack .submitBtn {
-    margin-top: 0.75rem;
-    padding: 10px 24px;
+.modalCard .submitBtn {
+    margin-top: 1.5rem;
+    padding: 14px 30px;
     background: linear-gradient(135deg, #ff4d4d, #ff69b4);
     color: white;
     border: none;
     border-radius: 50px;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     cursor: pointer;
     width: 100%;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
 }
 
-.flipBack .submitBtn:disabled {
+.modalCard .submitBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 77, 77, 0.4);
+}
+
+.modalCard .submitBtn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* === LETTER CARD (after unlock) === */
